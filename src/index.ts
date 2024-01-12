@@ -1,16 +1,12 @@
 import OpenAI from 'openai';
 import Express from 'express';
-import { ChromaClient, OpenAIEmbeddingFunction } from 'chromadb';
-import config from '../config.json';
+import { ChromaClient } from 'chromadb';
+import { getCollection, createCollection } from './chroma/collection';
 
 
 function main() {
     const app = Express();
     const client = new ChromaClient();
-
-    const embedder = new OpenAIEmbeddingFunction({
-        openai_api_key: config.OPENAI_API_KEY,
-    });
 
     app.get('/query/:message', async (req, res) => {
         var response = await queryopenai(req.params.message);
@@ -19,24 +15,13 @@ function main() {
         }))
     });
 
-    app.get('/collection', async (req, res) => {
-        client.getCollection({
-            name: 'chroma',
-            embeddingFunction: embedder,
-        }).then(async collection => {
-            var peek = await collection.peek();
-            var count = await collection.count();
-            res.end(JSON.stringify({
-                peek: peek,
-                count: count
-            }))
-        }).catch(err => {
-            res.end(JSON.stringify({
-                error: err.message
-            }))
-            console.error(err.message);
-        })
+    app.get('/collection/get/:name', async (req, res) => {
+        res.end(await getCollection(client, req.params.name));
     });
+
+    app.get('/collection/create/:name', async (req, res) => {
+        res.end(await createCollection(client, req.params.name));
+    })
 
     const openai = new OpenAI();
 

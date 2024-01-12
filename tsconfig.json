@@ -7,7 +7,8 @@
         "skipLibCheck": true,
         "resolveJsonModule": true,
         "moduleResolution": "NodeNext",
-        "module": "NodeNext"
+        "module": "NodeNext",
+        "useUnknownInCatchVariables": false
     },
     "include": [
         "src/**/*.ts",
