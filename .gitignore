@@ -4,4 +4,5 @@ node_modules
 .chroma
 chroma.log
 config.json
-
+data
+*/.cache
