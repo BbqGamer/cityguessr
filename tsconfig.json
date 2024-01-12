@@ -5,11 +5,13 @@
         "strict": true,
         "esModuleInterop": true,
         "skipLibCheck": true,
+        "resolveJsonModule": true,
         "moduleResolution": "NodeNext",
         "module": "NodeNext"
     },
     "include": [
-        "src/**/*.ts"
+        "src/**/*.ts",
+        "../config.json"
     ],
     "exclude": [
         "node_modules"
