@@ -14,7 +14,7 @@ export function auth(req: Request, res: Response, next: NextFunction) {
     }
     authenticate(req.body.username, req.body.password, (err, user, message) => {
         if (err) { next(err); }
-        else if (!user) { 
+        else if (!user) {
             res.render('login', { user: req.session.user, error: message });
         } else {
             req.session.user = {
@@ -48,7 +48,7 @@ export function register(req: Request, res: Response, next: NextFunction) {
         return;
     }
     if (!req.body.username || !req.body.password || !req.body.email) {
-        res.redirect('/auth/register');
+        res.render('register', { user: req.session.user, error: "Please fill out all fields" });
         return;
     }
     const user: User = {
@@ -64,7 +64,7 @@ export function register(req: Request, res: Response, next: NextFunction) {
         if (err) { next(err); }
         else if (!user) {
             if (!message) { message = "Unknown error"; }
-            res.render('register', { message: message });
+            res.render('register', { user: req.session.user, error: message });
         } else {
             req.session.user = {
                 user_id: user.id,

@@ -8,7 +8,7 @@ authRouter.get('/login', function (req, res) {
 })
 
 authRouter.get('/register', function (req, res) {
-    res.render('register');
+    res.render('register', { user: req.session.user, error: '' });
 })
 
 authRouter.get('/logout', function (req, res) {
