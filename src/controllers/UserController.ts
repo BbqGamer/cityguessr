@@ -4,19 +4,19 @@ import { UserModel } from "../models/User";
 
 export class UserController {
     static async getAll(req: Request, res: Response): Promise<void> {
+        if (!req.session.user) {
+            res.redirect('/auth/login');
+            return;
+        }
+        console.log(req.session.user);
+        if (req.session.user.privilege < 1) {
+            res.status(401).render('status/401');
+            return;
+        }
         UserModel.getAll((err, users) => {
-            if (err) { res.sendStatus(500); } else {
-                res.json(users);
-            }
-        });
-    }
-
-    static async getByUsername(req: Request, res: Response): Promise<void> {
-        UserModel.getByUsername(req.params.username, (err, user) => {
-            if (err) { return res.sendStatus(500); }
-            if (!user) { return res.sendStatus(404); }
+            if (err) { res.sendStatus(500); }
             else {
-                res.json(user);
+                res.render('users', { users: users });
             }
         });
     }

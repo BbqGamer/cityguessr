@@ -11,19 +11,22 @@
     <header class="header">
         <nav>
             <% if (!user) { %>
-            <form accept="/auth/signup">
-                <button cls="signup">Sign up</button>
-            </form>
-            <form action="/auth/login">
-                <button class="login">Login</button>
-            </form>
-            <% } else { %>
-            <form action="/auth/logout" method="get">
-                <button class="logout">Logout</button>
-            </form>
-            <p>
-                <span class="username">Logged as: <%= user.username %></span>
-            </p>
+                <form accept="/auth/signup">
+                    <button cls="signup">Sign up</button>
+                </form>
+                <form action="/auth/login">
+                    <button class="login">Login</button>
+                </form>
+                <% } else { %>
+                <form action="/auth/logout" method="get">
+                    <button class="logout">Logout</button>
+                </form>
+                <p>
+                    <span class="username">Logged as: <%= user.username %></span>
+                </p>
+                <% if (user.privilege > 0) { %>
+                    <a href="/users">Users</a>
+                <% ;} %>
             <% }; %>
         </nav>
     </header>

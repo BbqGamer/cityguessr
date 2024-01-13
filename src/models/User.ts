@@ -7,6 +7,7 @@ export interface User {
     salt: Buffer;
     email: string;
     email_verified: boolean;
+    privilege: number;
 }
 
 type Callback<T> = (error: any, user?: T) => void;

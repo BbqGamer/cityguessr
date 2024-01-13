@@ -20,6 +20,7 @@ declare module 'express-session' {
         user?: {
             user_id: number;
             username: string;
+            privilege: number;
         }
     }
 }
@@ -31,7 +32,9 @@ app.use(session({
 }))
 
 app.use('/', indexRouter);
-app.use('/', authRouter);
+app.use((req, res) => {
+    res.status(404).render('status/404');
+});
 
 app.listen(3001, () => {
     console.log('Server running on http://localhost:3001');

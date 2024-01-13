@@ -12,9 +12,11 @@ export function auth(req: Request, res: Response) {
         if (err) { return res.sendStatus(500); }
         if (!user) { return res.status(401).send(message); }
         else {
+            console.log(user);
             req.session.user = {
                 user_id: user.id,
                 username: user.username,
+                privilege: user.privilege
             }
             res.redirect('/');
         }

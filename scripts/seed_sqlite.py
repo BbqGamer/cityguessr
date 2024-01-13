@@ -32,7 +32,8 @@ def create_tables(cursor):
         hashed_password BLOB, \
         salt BLOB, \
         email TEXT UNIQUE, \
-        email_verified INTEGER \
+        email_verified INTEGER, \
+        privilege INTEGER DEFAULT 0 \
     )")
 
 
@@ -66,26 +67,28 @@ def seed_cities(cursor):
         ))
 
 
-def insert_user(cursor, username, password, salt, email):
+def insert_user(cursor, username, password, salt, email, privilege):
     hashed_password = hashlib.pbkdf2_hmac(
         'sha256', password, salt, 310000, 32
     )
     cursor.execute('''
         INSERT INTO users (
-            username, hashed_password, salt, email, email_verified
-        ) VALUES (?, ?, ?, ?, ?)
+            username, hashed_password, salt, email, email_verified, privilege
+        ) VALUES (?, ?, ?, ?, ?, ?)
     ''', (
         username,
         hashed_password,
         salt,
         email,
-        True
+        True,
+        privilege
     ))
 
 
 def seed_users(cursor):
-    insert_user(cursor, 'admin', b'admin', b'salty_admin', 'admin@gmail.com')
-    insert_user(cursor, 'user', b'user', b'salty_user', 'user@gmail.com')
+    insert_user(cursor, 'admin', b'admin',
+                b'salty_admin', 'admin@gmail.com', 1)
+    insert_user(cursor, 'user', b'user', b'salty_user', 'user@gmail.com', 0)
 
 
 if __name__ == "__main__":

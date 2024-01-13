@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { UserController } from "../../controllers/UserController";
+import { UserControllerApi } from "../../controllers/api/UserController";
 
 export const userApiRouter = Router()
 
-userApiRouter.get('/', UserController.getAll)
-userApiRouter.get('/:username', UserController.getByUsername);
+userApiRouter.get('/', UserControllerApi.getAll)
+userApiRouter.get('/:username', UserControllerApi.getByUsername);
