@@ -1,4 +1,3 @@
-import { Request } from 'express';
 import { db } from '../services/db';
 
 
@@ -15,49 +14,30 @@ export interface City {
     infobox: string;
 }
 
-const DB_PATH = 'data/db.sqlite3';
+type Callback<T> = (error: any, city?: T) => void;
 
 export class CityModel {
-    static getAll(callback: (error: Error | null, cities: City[]) => void) {
+    static getAll(cb: Callback<City[]>) {
         const query = 'SELECT * FROM cities';
 
         db.all(query, (err, rows: City[]) => {
-            if (err) {
-                return callback(err, []);
-            }
-
+            if (err) { return cb(err); }
             if (rows && rows.length > 0) {
-                return callback(null, rows);
+                cb(null, rows);
             }
         });
     }
 
-    static getOne(req: Request, callback: (error: Error | null, city: City) => void) {
-        const query = 'SELECT * FROM cities WHERE id = ' + req.params.id + ' LIMIT 1';
+    static getById(city_id: number, cb: Callback<City | null>) {
+        const query = 'SELECT * FROM cities WHERE id = ? LIMIT 1';
 
-        db.get(query, (err, row: City) => {
-            if (err) {
-                return callback(err, CityModel.empty());
-            }
-
+        db.get(query, [city_id], (err, row: City) => {
+            if (err) { return cb(err); }
             if (row) {
-                return callback(null, row);
+                return cb(null, row);
+            } else {
+                return cb(null, null);
             }
         });
-    }
-
-    static empty(): City {
-        return {
-            id: 0,
-            name: '',
-            url: '',
-            country_name: '',
-            country_url: '',
-            country_flag_url: '',
-            longitude: 0,
-            latitude: 0,
-            description: '',
-            infobox: '',
-        };
     }
 }
