@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express"
 import crypto from "crypto";
 import { UserModel, User } from "../models/User";
+import { sendActivationEmail } from "./activation";
 
 
 const HASH_ALG = 'sha256';
@@ -67,12 +68,13 @@ export function register(req: Request, res: Response, next: NextFunction) {
             if (!message) { message = "Unknown error"; }
             res.render('register', { user: req.session.user, error: message });
         } else {
+            sendActivationEmail(user);
             req.session.user = {
                 user_id: user.id,
                 username: user.username,
                 privilege: user.privilege
             }
-            res.redirect('/');
+            res.render('register-success', { user: req.session.user })
         }
     });
 }
