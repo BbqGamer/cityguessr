@@ -12,6 +12,7 @@
     },
     "include": [
         "src/**/*.ts",
+        "src/**/*.ejs",
         "../config.json"
     ],
     "exclude": [
