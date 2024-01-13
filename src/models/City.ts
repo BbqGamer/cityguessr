@@ -1,5 +1,5 @@
 import { Request } from 'express';
-import sqlite from 'sqlite3';
+import { db } from '../services/db';
 
 
 export interface City {
@@ -19,12 +19,9 @@ const DB_PATH = 'data/db.sqlite3';
 
 export class CityModel {
     static getAll(callback: (error: Error | null, cities: City[]) => void) {
-        const db = new sqlite.Database(DB_PATH);
         const query = 'SELECT * FROM cities';
 
         db.all(query, (err, rows: City[]) => {
-            db.close();
-
             if (err) {
                 return callback(err, []);
             }
@@ -36,12 +33,9 @@ export class CityModel {
     }
 
     static getOne(req: Request, callback: (error: Error | null, city: City) => void) {
-        const db = new sqlite.Database(DB_PATH);
         const query = 'SELECT * FROM cities WHERE id = ' + req.params.id + ' LIMIT 1';
 
         db.get(query, (err, row: City) => {
-            db.close();
-
             if (err) {
                 return callback(err, CityModel.empty());
             }

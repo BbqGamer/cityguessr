@@ -2,6 +2,7 @@ import Express from 'express';
 import { authRouter } from './routes/auth';
 import { indexRouter } from './routes';
 import path from 'path';
+import { db } from './services/db';
 
 
 const app = Express();
@@ -17,5 +18,6 @@ app.listen(3001, () => {
 })
 
 process.on('SIGINT', () => {
+    db.close();
     process.exit();
 })
