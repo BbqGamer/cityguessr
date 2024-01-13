@@ -15,7 +15,7 @@ export class UserController {
         UserModel.getAll((err, users) => {
             if (err) { next(err) }
             else {
-                res.render('users', { users: users });
+                res.render('users', { user: req.session.user, users: users });
             }
         });
     }

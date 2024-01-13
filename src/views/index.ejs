@@ -8,28 +8,7 @@
 </head>
 
 <body>
-    <header class="header">
-        <nav>
-            <% if (!user) { %>
-                <form action="/auth/register">
-                    <button class="register">Register</button>
-                </form>
-                <form action="/auth/login">
-                    <button class="login">Login</button>
-                </form>
-                <% } else { %>
-                <form action="/auth/logout" method="get">
-                    <button class="logout">Logout</button>
-                </form>
-                <p>
-                    <span class="username">Logged as: <%= user.username %></span>
-                </p>
-                <% if (user.privilege > 0) { %>
-                    <a href="/users">Users</a>
-                <% ;} %>
-            <% }; %>
-        </nav>
-    </header>
+    <%- include('components/header') %>
 </body>
 
 </html>

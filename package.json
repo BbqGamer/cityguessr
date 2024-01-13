@@ -6,11 +6,12 @@
   "type": "commonjs",
   "scripts": {
     "clean": "rm -rf dist/*",
-    "copy-assets": "cp -R src/views src/public dist/src",
+    "copy-assets": "cp -R src/views dist/src",
+    "scss": "node-sass src/public/scss -o dist/src/public/css",
     "tsc": "tsc",
-    "build": "npm-run-all clean tsc copy-assets",
+    "build": "npm-run-all clean tsc copy-assets scss",
     "dev:start": "npm-run-all build start",
-    "dev": "nodemon --watch src -e ts,ejs,css --exec npm run dev:start",
+    "dev": "nodemon --watch src -e ts,ejs,scss --exec npm run dev:start",
     "start": "node dist/src/app.js"
   },
   "keywords": [],
