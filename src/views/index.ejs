@@ -11,8 +11,8 @@
     <header class="header">
         <nav>
             <% if (!user) { %>
-                <form accept="/auth/signup">
-                    <button cls="signup">Sign up</button>
+                <form action="/auth/register">
+                    <button class="register">Register</button>
                 </form>
                 <form action="/auth/login">
                     <button class="login">Login</button>

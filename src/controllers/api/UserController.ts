@@ -12,7 +12,7 @@ export class UserControllerApi {
     }
 
     static async getByUsername(req: Request, res: Response, next: NextFunction): Promise<void> {
-        UserModel.getByUsername(req.params.username, (err, user) => {
+        UserModel.get('username', req.params.username, (err, user) => {
             if (err) { next(err); }
             else if (!user) { return res.sendStatus(404); }
             else {

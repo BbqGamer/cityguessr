@@ -1,10 +1,14 @@
 import { Router } from "express";
-import { auth } from "../services/auth";
+import { auth, register } from "../services/auth";
 
 export var authRouter = Router();
 
 authRouter.get('/login', function (req, res) {
     res.render('login');
+})
+
+authRouter.get('/register', function (req, res) {
+    res.render('register');
 })
 
 authRouter.get('/logout', function (req, res) {
@@ -19,4 +23,4 @@ authRouter.get('/logout', function (req, res) {
 })
 
 authRouter.post('/login/password', auth)
-
+authRouter.post('/register', register)
