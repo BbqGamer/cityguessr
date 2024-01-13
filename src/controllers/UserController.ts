@@ -23,6 +23,4 @@ export class UserController {
 }
 
 export const userRouter = Router();
-
 userRouter.get('/', UserController.getAll);
-userRouter.get('/:username', UserController.getByUsername);
