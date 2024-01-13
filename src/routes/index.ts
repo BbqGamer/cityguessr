@@ -8,5 +8,5 @@ indexRouter.use('/cities', cityRouter);
 indexRouter.use('/users', userRouter);
 
 indexRouter.get('/', (req, res) => {
-    res.render('index');
+    res.render('index', { user: req.session.user });
 });

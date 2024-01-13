@@ -3,12 +3,21 @@ import crypto from "crypto";
 import { UserModel, User } from "../models/User";
 
 
-// define authenticaton middleware
 export function auth(req: Request, res: Response) {
+    if (req.session.user) {
+        res.redirect('/'); // The user is already logged in
+        return;
+    }
     authenticate(req.body.username, req.body.password, (err, user, message) => {
         if (err) { return res.sendStatus(500); }
         if (!user) { return res.status(401).send(message); }
-        else { return res.redirect('/'); }
+        else {
+            req.session.user = {
+                user_id: user.id,
+                username: user.username,
+            }
+            res.redirect('/');
+        }
     });
 }
 

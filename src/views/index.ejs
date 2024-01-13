@@ -10,12 +10,14 @@
 <body>
     <header class="header">
         <nav>
+            <% if (user) { %>
             <form accept="/signup">
-                <button class="signup">Sign up</button>
+                <button cls="signup">Sign up</button>
             </form>
             <form action="/login">
                 <button class="login">Login</button>
             </form>
+            <% }; %>
             <form action="/logout" method="post">
                 <button class="logout">Logout</button>
             </form>
