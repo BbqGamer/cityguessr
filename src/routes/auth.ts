@@ -4,7 +4,7 @@ import { auth, register } from "../services/auth";
 export var authRouter = Router();
 
 authRouter.get('/login', function (req, res) {
-    res.render('login');
+    res.render('login', { user: req.session.user, error: '' });
 })
 
 authRouter.get('/register', function (req, res) {

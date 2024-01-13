@@ -14,8 +14,9 @@ export function auth(req: Request, res: Response, next: NextFunction) {
     }
     authenticate(req.body.username, req.body.password, (err, user, message) => {
         if (err) { next(err); }
-        else if (!user) { return res.status(401).send(message); }
-        else {
+        else if (!user) { 
+            res.render('login', { user: req.session.user, error: message });
+        } else {
             req.session.user = {
                 user_id: user.id,
                 username: user.username,

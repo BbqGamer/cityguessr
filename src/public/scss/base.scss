@@ -2,4 +2,10 @@
 
 body {
 	font-family: Arial, Helvetica, sans-serif;
+	background-color: $nord4;
+}
+
+.container {
+	display: flex;
+	justify-content: center;
 }
