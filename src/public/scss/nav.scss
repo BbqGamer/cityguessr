@@ -1,0 +1,35 @@
+@import 'nord.scss';
+
+nav {
+    background-color: $nord3;
+    height: 50px;
+}
+
+nav div {
+    float: right;
+    color: $nord4;
+    text-align: center;
+    line-height: 50px;
+    padding: 0 16px;
+}
+
+nav .left {
+    float: left;
+}
+
+nav div a {
+    color: $nord4;
+    text-decoration: none;
+}
+
+nav div:hover {
+    background-color: $nord2;
+}
+
+nav div h1 {
+    font-weight: bold;
+}
+
+.username {
+    font-weight: bold;
+}

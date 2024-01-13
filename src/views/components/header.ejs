@@ -1,23 +1,29 @@
 <header class="header">
     <nav>
-        <h1>Cityguessr</h1>
+        <div class="left">
+            <h1>Cityguessr</h1>
+        </div>
         <% if (!user) { %>
-            <form action="/auth/register">
-                <button class="register">Register</button>
-            </form>
-            <form action="/auth/login">
-                <button class="login">Login</button>
-            </form>
-        <% } else { %>
-            <form action="/auth/logout" method="get">
-                <button class="logout">Logout</button>
-            </form>
-            <p>
-                <span class="username">Logged as: <%= user.username %></span>
-            </p>
-            <% if (user.privilege > 0) { %>
-                <a href="/users">Users</a>
-            <% ;} %>
-        <% }; %>
+            <div>
+                <a href="/auth/login">Login</a>
+            </div>
+            <div>
+                <a href="/auth/register">Register</a>
+            </div>
+            <% } else { %>
+                <div>
+                    <a href="/auth/logout" method="get">Logout</a>
+                </div>
+                <% if (user.privilege> 0) { %>
+                    <div>
+                        <a href="/users">Users</a>
+                    </div>
+                <% ;} %>
+                <div>
+                    <p>
+                        Logged as: <span class="username"><%= user.username %></span>
+                    </p>
+                </div>
+            <% }; %>
     </nav>
 </header>
