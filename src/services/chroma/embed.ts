@@ -1,4 +1,4 @@
-import config from '../../config.json';
+import config from '../../../config.json';
 import { OpenAIEmbeddingFunction } from 'chromadb';
 
 export const embedder = new OpenAIEmbeddingFunction({
