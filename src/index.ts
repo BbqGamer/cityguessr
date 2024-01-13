@@ -1,7 +1,7 @@
 import Express from 'express';
 import { ChromaClient } from 'chromadb';
 import { getCollection, createCollection } from './chroma/collection';
-import { CityController } from './controllers/CityController';
+import { cityRouter } from './controllers/CityController';
 
 
 function main() {
@@ -16,7 +16,7 @@ function main() {
         res.end(await createCollection(client, req.params.name));
     })
 
-    app.get('/cities', CityController.getAll)
+    app.use('/cities', cityRouter);
 
     app.listen(3001, () => {
         console.log('Server running on http://localhost:3001');
