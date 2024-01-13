@@ -4,7 +4,7 @@ import json
 DB_FILE = '../data/db.sqlite3'
 
 
-def create_table():
+def create_tables():
     conn = sqlite3.connect(DB_FILE)
     cursor = conn.cursor()
 
@@ -22,6 +22,15 @@ def create_table():
             infobox TEXT
         )
     ''')
+
+    cursor.execute("CREATE TABLE IF NOT EXISTS users ( \
+        id INTEGER PRIMARY KEY, \
+        username TEXT UNIQUE, \
+        hashed_password BLOB, \
+        salt BLOB, \
+        email TEXT UNIQUE, \
+        email_verified INTEGER \
+    )")
 
 
 def seed_table():
@@ -58,5 +67,6 @@ def seed_table():
     conn.commit()
 
 
-create_table()
-seed_table()
+if __name__ == "__main__":
+    create_tables()
+    seed_table()
