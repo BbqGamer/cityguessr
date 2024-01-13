@@ -1,13 +1,16 @@
 import sqlite3
 import json
+import hashlib
 
 DB_FILE = '../data/db.sqlite3'
 
 
-def create_tables():
-    conn = sqlite3.connect(DB_FILE)
-    cursor = conn.cursor()
+def cleanup(cursor):
+    cursor.execute('DROP TABLE IF EXISTS cities')
+    cursor.execute('DROP TABLE IF EXISTS users')
 
+
+def create_tables(cursor):
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS cities (
             id INTEGER PRIMARY KEY,
@@ -33,10 +36,7 @@ def create_tables():
     )")
 
 
-def seed_table():
-    conn = sqlite3.connect(DB_FILE)
-    cursor = conn.cursor()
-
+def seed_cities(cursor):
     with open('../data/cities.json', 'r') as f:
         seed = json.load(f)
 
@@ -64,9 +64,38 @@ def seed_table():
             city['description'],
             city['infobox']
         ))
-    conn.commit()
+
+
+def insert_user(cursor, username, password, salt, email):
+    hashed_password = hashlib.pbkdf2_hmac(
+        'sha256', password, salt, 310000, 32
+    )
+    cursor.execute('''
+        INSERT INTO users (
+            username, hashed_password, salt, email, email_verified
+        ) VALUES (?, ?, ?, ?, ?)
+    ''', (
+        username,
+        hashed_password,
+        salt,
+        email,
+        True
+    ))
+
+
+def seed_users(cursor):
+    insert_user(cursor, 'admin', b'admin', b'salty_admin', 'admin@gmail.com')
+    insert_user(cursor, 'user', b'user', b'salty_user', 'user@gmail.com')
 
 
 if __name__ == "__main__":
-    create_tables()
-    seed_table()
+    conn = sqlite3.connect(DB_FILE)
+    cursor = conn.cursor()
+
+    cleanup(cursor)
+    create_tables(cursor)
+    seed_cities(cursor)
+    seed_users(cursor)
+
+    conn.commit()
+    conn.close()

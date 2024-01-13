@@ -23,6 +23,5 @@ export class CityController {
 }
 
 export const cityRouter = Router();
-
 cityRouter.get('/', CityController.getAll);
 cityRouter.get('/:id', CityController.getOne);

@@ -6,3 +6,4 @@ chroma.log
 config.json
 data
 */.cache
+*.pyc

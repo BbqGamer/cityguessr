@@ -12,13 +12,14 @@ export interface User {
 type Callback<T> = (error: any, user?: T) => void;
 
 export class UserModel {
-    static getByUsername(username: string, cb: Callback<User>) {
+    static getByUsername(username: string, cb: Callback<User | null>) {
         const query = 'SELECT * FROM users WHERE username = ? LIMIT 1';
         db.get(query, [username], (err, row: User) => {
             if (err) { return cb(err); }
-
             if (row) {
                 return cb(null, row);
+            } else {
+                return cb(null, null);
             }
         });
     }
@@ -30,10 +31,16 @@ export class UserModel {
             if (err) {
                 return cb(err);
             }
+            return cb(null, rows);
+        });
+    }
 
-            if (rows && rows.length > 0) {
-                return cb(null, rows);
-            }
+    static create(user: User, cb: Callback<User>) {
+        const query = 'INSERT INTO users (username, hashed_password, salt, email, email_verified) VALUES (?, ?, ?, ?, ?)';
+        db.run(query, [user.username, user.hashed_password, user.salt, user.email, user.email_verified], function (err) {
+            if (err) { return cb(err); }
+            user.id = this.lastID;
+            return cb(null, user);
         });
     }
 }
