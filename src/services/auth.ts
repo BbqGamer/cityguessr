@@ -1,18 +1,17 @@
-import { Request, Response } from "express"
+import { NextFunction, Request, Response } from "express"
 import crypto from "crypto";
 import { UserModel, User } from "../models/User";
 
 
-export function auth(req: Request, res: Response) {
+export function auth(req: Request, res: Response, next: NextFunction) {
     if (req.session.user) {
         res.redirect('/'); // The user is already logged in
         return;
     }
     authenticate(req.body.username, req.body.password, (err, user, message) => {
-        if (err) { return res.sendStatus(500); }
-        if (!user) { return res.status(401).send(message); }
+        if (err) { next(err); }
+        else if (!user) { return res.status(401).send(message); }
         else {
-            console.log(user);
             req.session.user = {
                 user_id: user.id,
                 username: user.username,

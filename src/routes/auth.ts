@@ -11,7 +11,7 @@ authRouter.get('/logout', function (req, res) {
     if (req.session.user) {
         req.session.destroy((err) => {
             if (err) {
-                console.log(err);
+                res.status(500).render('status/500');
             }
         });
     }
@@ -19,3 +19,4 @@ authRouter.get('/logout', function (req, res) {
 })
 
 authRouter.post('/login/password', auth)
+

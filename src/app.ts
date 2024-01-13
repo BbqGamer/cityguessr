@@ -1,5 +1,4 @@
-import Express from 'express';
-import { authRouter } from './routes/auth';
+import express, { Request, Response, NextFunction } from 'express';
 import { indexRouter } from './routes';
 import path from 'path';
 import { db } from './services/db';
@@ -7,13 +6,13 @@ import session from 'express-session';
 import config from '../config.json';
 
 
-const app = Express();
+const app = express();
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
-app.use(Express.json());
-app.use(Express.urlencoded({ extended: false }));
-app.use(Express.static(path.join(__dirname, 'public')));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(express.static(path.join(__dirname, 'public')));
 
 declare module 'express-session' {
     interface SessionData {
@@ -32,8 +31,15 @@ app.use(session({
 }))
 
 app.use('/', indexRouter);
-app.use((req, res) => {
+app.use((req: Request, res: Response) => {
     res.status(404).render('status/404');
+});
+
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+    if (res.headersSent) {
+        return next(err)
+    }
+    res.status(500).render('status/500', { error: err })
 });
 
 app.listen(3001, () => {
