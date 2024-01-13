@@ -19,7 +19,18 @@ export class UserController {
             }
         });
     }
-}
 
-export const userRouter = Router();
-userRouter.get('/', UserController.getAll);
+    static async getProfile(req: Request, res: Response, next: NextFunction): Promise<void> {
+        if (!req.session.user) {
+            res.redirect('/auth/login');
+            return;
+        }
+
+        UserModel.get('id', req.session.user.user_id, (err, user) => {
+            if (err) { next(err) }
+            else {
+                res.render('profile', { user: req.session.user, profile: user });
+            }
+        });
+    }
+}

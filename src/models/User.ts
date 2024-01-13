@@ -13,7 +13,7 @@ export interface User {
 type Callback<T> = (error: any, user?: T, message?: string) => void;
 
 export class UserModel {
-    static get(criteria: string, value: string, cb: Callback<User | null>) {
+    static get(criteria: string, value: any, cb: Callback<User | null>) {
         const query = `SELECT * FROM users WHERE ${criteria} = ? LIMIT 1`;
         db.get(query, [value], (err, row: User) => {
             if (err) { return cb(err); }

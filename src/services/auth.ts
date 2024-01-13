@@ -51,11 +51,12 @@ export function register(req: Request, res: Response, next: NextFunction) {
         res.render('register', { user: req.session.user, error: "Please fill out all fields" });
         return;
     }
+    var salt = crypto.randomBytes(32);
     const user: User = {
         id: -1,
         username: req.body.username,
-        hashed_password: crypto.pbkdf2Sync(req.body.password, crypto.randomBytes(32), HASH_ITER, HASH_KEYLEN, HASH_ALG),
-        salt: crypto.randomBytes(32),
+        hashed_password: crypto.pbkdf2Sync(req.body.password, salt, HASH_ITER, HASH_KEYLEN, HASH_ALG),
+        salt: salt,
         email: req.body.email,
         email_verified: false,
         privilege: 0

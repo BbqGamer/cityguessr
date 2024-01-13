@@ -1,3 +1,5 @@
+@import 'nord.scss';
+
 table {
     border-collapse: collapse;
     margin: 25px 0;
@@ -8,7 +10,7 @@ table {
 }
 
 table thead tr {
-    background-color: #009879;
+    background-color: $nord14;
     color: #ffffff;
     text-align: left;
 }

@@ -17,6 +17,7 @@
                     <th>ID</th>
                     <th>Username</th>
                     <th>Email</th>
+                    <th>Email verified</th>
                 </tr>
             </thead>
             <tbody>
@@ -30,6 +31,9 @@
                         </td>
                         <td>
                             <%= user.email %>
+                        </td>
+                        <td>
+                            <%= user.email_verified %>
                         </td>
                     </tr>
                     <% }); %>

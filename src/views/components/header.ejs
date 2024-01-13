@@ -1,29 +1,27 @@
 <header class="header">
     <nav>
-        <div class="left">
+        <div class="left" onclick="window.location.href='/'">
             <h1>Cityguessr</h1>
         </div>
         <% if (!user) { %>
-            <div>
-                <a href="/auth/login">Login</a>
+            <div onclick="window.location.href='/auth/login'">
+                Login
             </div>
-            <div>
-                <a href="/auth/register">Register</a>
+            <div onclick="window.location.href='/auth/register'">
+                Register
             </div>
-            <% } else { %>
-                <div>
-                    <a href="/auth/logout" method="get">Logout</a>
+        <% } else { %>
+            <div onclick="window.location.href='/auth/logout'">
+                Logout
+            </div>
+            <% if (user.privilege> 0) { %>
+                <div onclick="window.location.href='/users'">
+                    Users
                 </div>
-                <% if (user.privilege> 0) { %>
-                    <div>
-                        <a href="/users">Users</a>
-                    </div>
-                <% ;} %>
-                <div>
-                    <p>
-                        Logged as: <span class="username"><%= user.username %></span>
-                    </p>
-                </div>
-            <% }; %>
+            <% ;} %>
+            <div onclick="window.location.href='/users/profile'">
+                Logged as: <span class="username"><%= user.username %></span>
+            </div>
+        <% }; %>
     </nav>
 </header>

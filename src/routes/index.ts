@@ -1,5 +1,5 @@
 import { cityRouter } from '../controllers/CityController';
-import { userRouter } from '../controllers/UserController';
+import { userRouter } from './users';
 import { apiRouter } from './api/api';
 import { Router } from 'express';
 import { authRouter } from './auth';
