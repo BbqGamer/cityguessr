@@ -1,12 +1,8 @@
 import { NextFunction, Request, Response } from "express"
-import crypto from "crypto";
 import { UserModel, User } from "../models/User";
-import { activate, sendActivationEmail } from "./activation";
+import { sendActivationEmail } from "./activation";
+import { hashPassword, getSalt, validatePassword } from "./password";
 
-
-const HASH_ALG = 'sha256';
-const HASH_ITER = 310000;
-const HASH_KEYLEN = 32;
 
 export function auth(req: Request, res: Response, next: NextFunction) {
     if (req.session.user) {
@@ -33,16 +29,10 @@ function authenticate(username: string, password: string, cb: (err: any, user?: 
     UserModel.get('username', username, (err, user) => {
         if (err) { return cb(err, undefined, "There was error retrieving user"); }
         if (!user) { return cb(null, undefined, "User does not exist"); }
-        if (!validatePassword(user, password)) { return cb(null, undefined, "Wrong password"); }
+        if (!validatePassword(password, user.hashed_password, user.salt)) { return cb(null, undefined, "Wrong password"); }
         return cb(null, user);
     });
 }
-
-function validatePassword(user: User, password: string): boolean {
-    const hash = crypto.pbkdf2Sync(password, user.salt, HASH_ITER, HASH_KEYLEN, HASH_ALG)
-    return crypto.timingSafeEqual(user.hashed_password, hash)
-}
-
 
 export function register(req: Request, res: Response, next: NextFunction) {
     if (req.session.user) {
@@ -53,11 +43,11 @@ export function register(req: Request, res: Response, next: NextFunction) {
         res.render('register', { user: req.session.user, error: "Please fill out all fields" });
         return;
     }
-    var salt = crypto.randomBytes(32);
+    var salt = getSalt();
     const user: User = {
         id: -1,
         username: req.body.username,
-        hashed_password: crypto.pbkdf2Sync(req.body.password, salt, HASH_ITER, HASH_KEYLEN, HASH_ALG),
+        hashed_password: hashPassword(req.body.password, salt),
         salt: salt,
         email: req.body.email,
         email_verified: false,

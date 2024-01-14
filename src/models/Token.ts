@@ -1,7 +1,7 @@
 import { db } from '../services/db';
 
 
-type Purpose = "activation" | "password_reset";
+type Purpose = "activation" | "forgot";
 
 export interface Token {
     user_id: number;
