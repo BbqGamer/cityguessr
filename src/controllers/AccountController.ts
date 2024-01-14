@@ -1,5 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { activateAccount } from '../services/activation';
+import { forgotPassword, resetPassword } from '../services/forgot';
+
 
 export class AccountController {
     static async resetPasswordPage(req: Request, res: Response) {
@@ -21,6 +23,44 @@ export class AccountController {
             }
             if (req.session.user && req.session.user.user_id === user_id) {
                 req.session.user.activated = true; // Update the session
+            }
+            res.render('success', {
+                user: req.session.user,
+                message: message
+            });
+        })
+    }
+
+    static async forgotPassword(req: Request, res: Response, next: NextFunction) {
+        if (!req.body.email) {
+            res.render('forgot', { user: req.session.user, error: 'Please enter your email' });
+            return;
+        }
+
+        forgotPassword(req.body.email, (err, message, success) => {
+            if (err) { return next(err); }
+            if (!success) {
+                res.render('forgot', { user: req.session.user, error: message });
+                return;
+            }
+            res.render('success', {
+                user: req.session.user,
+                message: message
+            });
+        })
+    }
+
+    static async resetPassword(req: Request, res: Response, next: NextFunction) {
+        if (!req.body.password) {
+            res.render('reset', { user: req.session.user, token: req.params.token, error: 'Please enter your new password' });
+            return;
+        }
+
+        resetPassword(req.params.token, req.body.password, (err, message, success) => {
+            if (err) { return next(err); }
+            if (!success) {
+                res.render('reset', { user: req.session.user, token: req.params.token, error: message });
+                return;
             }
             res.render('success', {
                 user: req.session.user,

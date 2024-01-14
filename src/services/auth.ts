@@ -1,4 +1,3 @@
-import { NextFunction, Request, Response } from "express"
 import { UserModel, User } from "../models/User";
 import { sendActivationEmail } from "./activation";
 import { hashPassword, getSalt, validatePassword } from "./password";

@@ -1,4 +1,3 @@
-import { Request, Response, NextFunction } from "express";
 import { transporter } from "./email";
 import { v4 } from "uuid";
 import { TokenModel } from "../models/Token";
@@ -6,65 +5,40 @@ import { UserModel } from "../models/User";
 import { getSalt, hashPassword } from "./password";
 
 
-export function sendForgotPasswordEmail(req: Request, res: Response, next: NextFunction) {
-    if (!req.body.email) {
-        res.render('forgot', { user: req.session.user, error: 'Please enter your email' });
-        return;
-    }
-
+export function forgotPassword(email: string, cb: (err?: Error, message?: string, success?: true) => void) {
     const token = v4();
-    UserModel.get('email', req.body.email, (err, user) => {
-        if (err) { return next(err); }
-        if (!user) {
-            res.render('forgot', { user: req.session.user, error: 'User does not exist' });
-            return;
-        }
+    UserModel.get('email', email, (err, user) => {
+        if (err) { return cb(err); }
+        if (!user) { return cb(undefined, 'User does not exist'); }
         TokenModel.create(user.id, token, "forgot", (err, activation) => {
-            if (err) { next(err); }
-            else {
-                transporter.sendMail({
-                    from: 'noreply@localhost',
-                    to: req.body.email,
-                    subject: 'Reset your password',
-                    text: `Please click the following link to reset your password: http://localhost:3001/auth/reset/${token}`,
-                });
-                res.render('success', {
-                    user: req.session.user,
-                    message: 'Check your email for a link to reset your password'
-                });
-            }
+            if (err) { return cb(err); }
+            transporter.sendMail({
+                from: 'noreply@localhost',
+                to: email,
+                subject: 'Reset your password',
+                text: `Please click the following link to reset your password: http://localhost:3001/auth/reset/${token}`,
+            });
+            cb(undefined, 'Check your email for a link to reset your password', true);
         })
     })
 }
 
-export function resetPassword(req: Request, res: Response, next: NextFunction) {
-    console.log('resetting');
-    if (!req.params.token || !req.body.password) {
-        next(new Error('No token or password provided'));
-    } else {
-        TokenModel.get(req.params.token, (err, token) => {
-            if (err) { next(err); }
-            else if (!token || token.purpose !== "forgot") {
-                res.render('status/401', { user: req.session.user, error: 'Invalid token' });
-            } else {
-                const DAY = 24 * 60 * 60 * 1000;
-                if (Date.now() - new Date(token.created_at).getMilliseconds() < DAY) {
-                    res.render('status/401', { user: req.session.user, error: 'Token expired' });
-                } else {
-                    const salt = getSalt();
-                    const hpass = hashPassword(req.body.password, salt);
-                    UserModel.update(token.user_id, { salt: salt, hashed_password: hpass }, (err, user) => {
-                        if (err) { next(err); }
-                        else {
-                            if (!user) {
-                                next(new Error('User not found'));
-                            } else {
-                                res.render('success', { user: req.session.user, message: 'Password reset successfully' })
-                            }
-                        }
-                    })
-                }
-            }
+export function resetPassword(token: string, password: string, cb: (err?: Error, message?: string, success?: true) => void) {
+    TokenModel.get(token, (err, token) => {
+        if (err) { return cb(err); }
+        if (!token || token.purpose !== "forgot") {
+            return cb(undefined, 'Invalid token');
+        }
+        const DAY = 24 * 60 * 60 * 1000;
+        if (Date.now() - new Date(token.created_at).getMilliseconds() < DAY) {
+            return cb(undefined, 'Token expired');
+        }
+        const salt = getSalt();
+        const hpass = hashPassword(password, salt);
+        UserModel.update(token.user_id, { salt: salt, hashed_password: hpass }, (err, user) => {
+            if (err) { return cb(err); }
+            if (!user) { return cb(new Error('User not found')) };
+            cb(undefined, 'Password reset successfully', true);
         })
-    }
+    })
 }
