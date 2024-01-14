@@ -17,14 +17,15 @@ export interface City {
     added_at: Date;
 }
 
+const cols = [
+    'id', 'name', 'url', 'country_name', 'country_url', 'country_flag_url', 'longitude',
+    'latitude', 'description', 'infobox', 'added_by', 'added_by', 'added_at'
+].map(col => 'cities.' + col)
+
 type Callback<T> = (error: any, city?: T) => void;
 
 export class CityModel {
     static getAll(offset: number, limit: number, cb: Callback<City[]>) {
-        const cols = [
-            'id', 'name', 'url', 'country_name', 'country_url', 'country_flag_url', 'longitude',
-            'latitude', 'description', 'infobox', 'added_by', 'added_by', 'added_at'
-        ].map(col => 'cities.' + col)
         const query = `SELECT ${cols}, users.username AS added_by_username 
                         FROM cities JOIN users ON cities.added_by = users.id
                         LIMIT ? OFFSET ?`;
@@ -36,7 +37,10 @@ export class CityModel {
     }
 
     static getById(city_id: number, cb: Callback<City | null>) {
-        const query = 'SELECT * FROM cities WHERE id = ? LIMIT 1';
+
+        const query = `SELECT ${cols}, users.username AS added_by_username
+                        FROM cities JOIN users ON cities.added_by = users.id
+                        WHERE cities.id = ? LIMIT 1`;
 
         db.get(query, [city_id], (err, row: City) => {
             if (err) { return cb(err); }
