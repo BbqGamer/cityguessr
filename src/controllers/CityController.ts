@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { CityModel } from "../models/City";
+import config from '../../config.json'
 
 export class CityController {
     static async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -24,7 +25,7 @@ export class CityController {
             if (err) { next(err); }
             else if (!city) { return res.sendStatus(404); }
             else {
-                res.json(city);
+                res.render('city', { user: req.session.user, city: city, mapsApiKey: config.MAPS_API_KEY });
             }
         });
     }

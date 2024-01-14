@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cityguessr</title>
+    <link rel="stylesheet" href="/css/base.css">
+</head>
+
+<body>
+    <%- include('components/header') %>
+    <div class="container">
+        <div>
+            <h2 style="font-weight: bold;"><%- city.name %></h2>
+            <p style="vertical-align: middle;">
+                <%- city.country_name %>
+                <img src="<%- city.country_flag_url %>" alt="<%- city.country_name %>">
+            </p>
+        </div>
+        <div>
+            <p><%- city.latitude %> <%- city.longitude %></p>
+        </div>
+        <div>
+            <p>Added by: <%- city.added_by_username %></p>
+            <p>Added at: <%- city.added_at %></p>
+        </div>
+        <iframe
+            width="600"
+            height="450"
+            style="border:0"
+            loading="lazy"
+            allowfullscreen
+            referrerpolicy="no-referrer-when-downgrade"
+            src="https://www.google.com/maps/embed/v1/place?key=<%= mapsApiKey %>
+                &q=<%= city.name %>&zoom=4">
+        </iframe>
+    </div>
+
+</body>
+
+</html>

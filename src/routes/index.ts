@@ -6,6 +6,7 @@ import { authRouter } from './auth';
 export const indexRouter = Router();
 
 indexRouter.use('/cities', cityRouter);
+
 indexRouter.use('/users', userRouter);
 indexRouter.use('/auth', authRouter);
 

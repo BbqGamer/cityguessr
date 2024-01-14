@@ -9,14 +9,14 @@
 
 <body>
     <%- include('components/header') %>
-        <%- include('components/city-list') %>
-            <ul class="pagination">
-                <% for (let i=1; i <=totalPages; i++) { %>
-                    <button onclick="window.location.href='/cities?page=<%= i %>'">
-                        <%= i %>
-                    </button>
-                    <% } %>
-            </ul>
+    <%- include('components/city-list') %>
+    <ul class="pagination">
+        <% for (let i=1; i <=totalPages; i++) { %>
+            <button onclick="window.location.href='/cities?page=<%= i %>'">
+                <%= i %>
+            </button>
+        <% } %>
+    </ul>
 </body>
 <style>
     .pagination {
