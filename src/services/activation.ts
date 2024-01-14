@@ -24,32 +24,26 @@ export const sendActivationEmail = (user: User) => {
 
 export function activate(req: Request, res: Response, next: NextFunction) {
     TokenModel.get(req.params.token, (err, token) => {
-        if (err) { next(err); }
-        else if (!token || token.purpose !== "activation") {
-            res.render('status/401', { user: req.session.user, error: 'Invalid token' });
-        } else {
-            const DAY = 24 * 60 * 60 * 1000;
-            console.log(token.created_at);
-            if (Date.now() - new Date(token.created_at).getMilliseconds() < DAY) {
-                res.render('status/401', { user: req.session.user, error: 'Token expired' });
-            } else {
-                UserModel.update(token.user_id, { email_verified: true }, (err, user) => {
-                    if (err) { next(err); }
-                    else {
-                        if (!user) {
-                            next(new Error('User not found'));
-                        } else {
-                            if (req.session.user && req.session.user.user_id === token.user_id) {
-                                req.session.user.activated = true;
-                            }
-                            res.render('success', {
-                                user: req.session.user,
-                                message: 'Account activated successfully'
-                            });
-                        }
-                    }
-                })
-            }
+        if (err) { return next(err); }
+        if (!token || token.purpose !== "activation") {
+            return res.render('status/401', { user: req.session.user, error: 'Invalid token' });
         }
+
+        const DAY = 24 * 60 * 60 * 1000;
+        if (Date.now() - new Date(token.created_at).getMilliseconds() < DAY) {
+            return res.render('status/401', { user: req.session.user, error: 'Token expired' });
+        }
+
+        UserModel.update(token.user_id, { email_verified: true }, (err, user) => {
+            if (err) { return next(err); }
+            if (!user) { return next(new Error('User not found')); }
+            if (req.session.user && req.session.user.user_id === token.user_id) {
+                req.session.user.activated = true;
+            }
+            res.render('success', {
+                user: req.session.user,
+                message: 'Account activated successfully'
+            });
+        })
     })
 }
