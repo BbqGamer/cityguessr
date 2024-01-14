@@ -5,19 +5,17 @@ import { TokenModel } from "../models/Token";
 import { UserModel } from "../models/User";
 import { transporter } from "./email";
 
-export const sendActivationEmail = (user: User) => {
+export function sendActivationEmail(user: User, cb: (result: Error | null) => void) {
     const token = v4();
     TokenModel.create(user.id, token, "activation", (err, activation) => {
-        if (err) { console.error(err); }
-        else {
-            const url = `http://localhost:3001/auth/activate/${token}`;
-            transporter.sendMail({
-                from: 'noreply@localhost',
-                to: user.email,
-                subject: 'Activate your account',
-                text: `Please click the following link to activate your account: ${url}`,
-            });
-        }
+        if (err) { return cb(err); }
+        const url = `http://localhost:3001/auth/activate/${token}`;
+        transporter.sendMail({
+            from: 'noreply@localhost',
+            to: user.email,
+            subject: 'Activate your account',
+            text: `Please click the following link to activate your account: ${url}`,
+        });
     })
 }
 

@@ -6,10 +6,6 @@ import { UserModel } from "../models/User";
 import { getSalt, hashPassword } from "./password";
 
 
-export function forgotPassword(req: Request, res: Response) {
-    res.render('forgot', { user: req.session.user, error: '' });
-}
-
 export function sendForgotPasswordEmail(req: Request, res: Response, next: NextFunction) {
     if (!req.body.email) {
         res.render('forgot', { user: req.session.user, error: 'Please enter your email' });
@@ -39,14 +35,6 @@ export function sendForgotPasswordEmail(req: Request, res: Response, next: NextF
             }
         })
     })
-}
-
-export function resetPasswordPage(req: Request, res: Response, next: NextFunction) {
-    if (!req.params.token) {
-        next(new Error('No token provided'));
-    } else {
-        res.render('reset', { user: req.session.user, token: req.params.token, error: '' });
-    }
 }
 
 export function resetPassword(req: Request, res: Response, next: NextFunction) {
