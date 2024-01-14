@@ -6,7 +6,7 @@ export class CityController {
     static async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
         CityModel.getAll((err, cities) => {
             if (err) { next(err); } else {
-                res.json(cities);
+                res.render('cities', { user: req.session.user, cities: cities });
             }
         });
     }

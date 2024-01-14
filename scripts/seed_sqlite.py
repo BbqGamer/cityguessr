@@ -12,21 +12,6 @@ def cleanup(cursor):
 
 
 def create_tables(cursor):
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS cities (
-            id INTEGER PRIMARY KEY,
-            name TEXT,
-            url TEXT,
-            country_name TEXT,
-            country_url TEXT,
-            country_flag_url TEXT,
-            logitude TEXT,
-            latitude TEXT,
-            description TEXT,
-            infobox TEXT
-        )
-    ''')
-
     cursor.execute("CREATE TABLE IF NOT EXISTS users ( \
         id INTEGER PRIMARY KEY, \
         username TEXT UNIQUE, \
@@ -36,6 +21,24 @@ def create_tables(cursor):
         email_verified INTEGER, \
         privilege INTEGER DEFAULT 0 \
     )")
+
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS cities (
+            id INTEGER PRIMARY KEY,
+            name TEXT,
+            url TEXT,
+            country_name TEXT,
+            country_url TEXT,
+            country_flag_url TEXT,
+            longitude TEXT,
+            latitude TEXT,
+            description TEXT,
+            infobox TEXT,
+            added_by INTEGER,
+            added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY(added_by) REFERENCES users(id) 
+        )
+    ''')
 
     cursor.execute('''CREATE TABLE IF NOT EXISTS tokens (
         id INTEGER PRIMARY KEY,
@@ -59,11 +62,12 @@ def seed_cities(cursor):
                 country_name,
                 country_url,
                 country_flag_url,
-                logitude,
+                longitude,
                 latitude,
                 description,
-                infobox
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                infobox,
+                added_by
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', (
             city['name'],
             city['url'],
@@ -73,7 +77,8 @@ def seed_cities(cursor):
             city['longitude'],
             city['latitude'],
             city['description'],
-            city['infobox']
+            city['infobox'],
+            1
         ))
 
 
@@ -107,8 +112,8 @@ if __name__ == "__main__":
 
     cleanup(cursor)
     create_tables(cursor)
-    seed_cities(cursor)
     seed_users(cursor)
+    seed_cities(cursor)
 
     conn.commit()
     conn.close()

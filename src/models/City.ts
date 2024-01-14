@@ -12,19 +12,24 @@ export interface City {
     latitude: number;
     description: string;
     infobox: string;
+    added_by: number;
+    added_by_username: string;
+    added_at: Date;
 }
 
 type Callback<T> = (error: any, city?: T) => void;
 
 export class CityModel {
     static getAll(cb: Callback<City[]>) {
-        const query = 'SELECT * FROM cities';
+        const cols = [
+            'id', 'name', 'url', 'country_name', 'country_url', 'country_flag_url', 'longitude',
+            'latitude', 'description', 'infobox', 'added_by', 'added_by', 'added_at'
+        ].map(col => 'cities.' + col)
+        const query = `SELECT ${cols}, users.username AS added_by_username FROM cities JOIN users ON cities.added_by = users.id;`;
 
         db.all(query, (err, rows: City[]) => {
             if (err) { return cb(err); }
-            if (rows && rows.length > 0) {
-                cb(null, rows);
-            }
+            cb(null, rows);
         });
     }
 

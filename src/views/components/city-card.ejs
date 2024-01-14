@@ -1,0 +1,33 @@
+<div class="city-card">
+    <div>
+        <h2 style="font-weight: bold;"><%- city.name %></h2>
+        <p style="vertical-align: middle;">
+            <%- city.country_name %>
+                <img src="<%- city.country_flag_url %>" alt="<%- city.country_name %>">
+        </p>
+    </div>
+    <div>
+        <p><%- city.latitude %> <%- city.longitude %></p>
+    </div>
+    <div>
+        <p>Added by: <%- city.added_by_username %></p>
+        <p>Added at: <%- city.added_at %></p>
+    </div>
+    <style>
+        .city-card {
+            background-color: aliceblue;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            min-width: 200px;
+            height: 200px;
+            margin: 10px;
+            padding: 14px;
+            border: 1px solid black;
+            border-radius: 10px;
+            font-size: 20px;
+            text-align: center;
+        }
+    </style>
+</div>
