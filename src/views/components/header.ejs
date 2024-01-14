@@ -21,6 +21,11 @@
             <% ;} %>
             <div onclick="window.location.href='/users/profile'">
                 Logged as: <span class="username"><%= user.username %></span>
+                <% if (user.activated) { %>
+                    <span class="verified">✓</span>
+                <% } else { %>
+                    <span class="not-verified">✗</span>
+                <% }; %>
             </div>
         <% }; %>
     </nav>

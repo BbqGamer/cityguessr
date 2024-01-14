@@ -8,7 +8,13 @@
 </head>
 
 <body>
+    <%- include('../components/header') %>
     <h1>401 Unauthorized</h1>
+    <% if (error) { %>
+        <p>
+            <%= error %>
+        </p>
+    <% } %>
     <img src="https://gifdb.com/images/high/angry-cat-triggered-hissing-camera-shake-g5bsu5e8eb5sjite.gif" alt="404">
 </body>
 

@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { auth, register } from "../services/auth";
+import { activate } from "../services/activation";
 
 export var authRouter = Router();
 
@@ -15,7 +16,7 @@ authRouter.get('/logout', function (req, res) {
     if (req.session.user) {
         req.session.destroy((err) => {
             if (err) {
-                res.status(500).render('status/500');
+                res.status(500).render('status/500', { user: req.session.user, error: err });
             }
         });
     }
@@ -24,3 +25,5 @@ authRouter.get('/logout', function (req, res) {
 
 authRouter.post('/login/password', auth)
 authRouter.post('/register', register)
+authRouter.get('/activate/:token', activate)
+

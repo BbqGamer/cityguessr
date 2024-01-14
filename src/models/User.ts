@@ -59,4 +59,13 @@ export class UserModel {
             });
         });
     }
+
+    static update(id: number, user: Partial<User>, cb: Callback<User | null>) {
+        const query = `UPDATE users SET ${Object.keys(user).map(key => `${key} = ?`).join(', ')} WHERE id = ?`;
+        db.run(query, [...Object.values(user), id], function (err) {
+            if (err) { return cb(err); }
+            if (this.changes === 0) { return cb(null, null); }
+            return cb(null, { id, ...user } as User);
+        });
+    }
 }

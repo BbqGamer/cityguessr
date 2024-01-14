@@ -9,7 +9,7 @@ export class UserController {
             return;
         }
         if (req.session.user.privilege < 1) {
-            res.status(401).render('status/401');
+            res.status(401).render('status/401', { user: req.session.user, error: 'Unauthorized' });
             return;
         }
         UserModel.getAll((err, users) => {

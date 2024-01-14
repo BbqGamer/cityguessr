@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express"
 import crypto from "crypto";
 import { UserModel, User } from "../models/User";
-import { sendActivationEmail } from "./activation";
+import { activate, sendActivationEmail } from "./activation";
 
 
 const HASH_ALG = 'sha256';
@@ -21,7 +21,8 @@ export function auth(req: Request, res: Response, next: NextFunction) {
             req.session.user = {
                 user_id: user.id,
                 username: user.username,
-                privilege: user.privilege
+                privilege: user.privilege,
+                activated: user.email_verified
             }
             res.redirect('/');
         }
@@ -72,7 +73,8 @@ export function register(req: Request, res: Response, next: NextFunction) {
             req.session.user = {
                 user_id: user.id,
                 username: user.username,
-                privilege: user.privilege
+                privilege: user.privilege,
+                activated: false
             }
             res.render('register-success', { user: req.session.user })
         }

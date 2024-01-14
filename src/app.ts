@@ -20,6 +20,7 @@ declare module 'express-session' {
             user_id: number;
             username: string;
             privilege: number;
+            activated: boolean;
         }
     }
 }
@@ -32,14 +33,14 @@ app.use(session({
 
 app.use('/', indexRouter);
 app.use((req: Request, res: Response) => {
-    res.status(404).render('status/404');
+    res.status(404).render('status/404', { user: req.session.user });
 });
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     if (res.headersSent) {
         return next(err)
     }
-    res.status(500).render('status/500', { error: err })
+    res.status(500).render('status/500', { user: req.session.user, error: err })
 });
 
 app.listen(3001, () => {
