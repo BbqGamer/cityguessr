@@ -33,7 +33,7 @@ app.use(session({
 
 app.use('/', indexRouter);
 app.use((req: Request, res: Response) => {
-    res.status(404).render('status/404', { user: req.session.user });
+    res.status(404).render('status/404', { user: req.session.user, error: 'Page not found' });
 });
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {

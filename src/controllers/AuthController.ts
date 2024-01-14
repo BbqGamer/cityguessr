@@ -8,9 +8,11 @@ export class AuthController {
 
     static async login(req: Request, res: Response, next: NextFunction) {
         if (req.session.user) {
-            res.redirect('/'); // The user is already logged in
+            console.log(`User is already logged in (${req.session.user.username})`)
+            res.redirect('/');
             return;
         }
+        console.log(`Authenticating user ${req.body.username}`)
         authenticate(req.body.username, req.body.password, (err, user, message) => {
             if (err) { next(err); }
             else if (!user) {
@@ -34,19 +36,24 @@ export class AuthController {
 
     static async register(req: Request, res: Response, next: NextFunction) {
         if (req.session.user) {
-            res.redirect('/'); // The user is already logged in
+            console.log(`User is already logged in (${req.session.user.username})`)
+            res.redirect('/');
             return;
         }
         if (!req.body.username || !req.body.password || !req.body.email) {
             res.render('register', { user: req.session.user, error: "Please fill out all fields" });
             return;
         }
+        console.log(`Creating user ${req.body.username}`)
         createUser(req.body.username, req.body.password, req.body.email, (err, user, message) => {
+            console.log(`Created user ${req.body.username}`)
             if (err) { return next(err); }
             if (!user) {
+                console.log(`Failed to create user ${req.body.username}: ${message}`)
                 res.render('register', { user: req.session.user, error: message });
                 return;
             }
+            console.log(`Created user ${req.body.username}`)
             req.session.user = {
                 user_id: user.id,
                 username: user.username,
@@ -61,9 +68,10 @@ export class AuthController {
     }
 
 
-    static async logout(req: Request, res: Response, next: NextFunction) {
+    static async logout(req: Request, res: Response) {
         if (req.session.user) {
-            req.session.destroy((err) => { next(err); });
+            console.log(`Logging out user ${req.session.user.username}`)
+            req.session.user = undefined;
         }
         res.redirect('/');
     }

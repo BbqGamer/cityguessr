@@ -9,12 +9,14 @@ export function sendActivationEmail(user: User, cb: (err?: Error) => void) {
     TokenModel.create(user.id, token, "activation", (err, activation) => {
         if (err) { return cb(err); }
         const url = `http://localhost:3001/auth/activate/${token}`;
+        console.debug('Sending email to ' + user.email);
         transporter.sendMail({
             from: 'noreply@localhost',
             to: user.email,
             subject: 'Activate your account',
             text: `Please click the following link to activate your account: ${url}`,
         });
+        cb();
     })
 }
 

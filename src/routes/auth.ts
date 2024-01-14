@@ -1,5 +1,4 @@
 import { Router } from "express";
-import { resetPassword } from "../services/forgot";
 import { AuthController } from "../controllers/AuthController";
 import { AccountController } from "../controllers/AccountController";
 
