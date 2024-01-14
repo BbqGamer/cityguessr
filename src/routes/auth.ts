@@ -31,6 +31,3 @@ authRouter.get('/forgot', forgotPassword)
 authRouter.post('/forgot', sendForgotPasswordEmail)
 authRouter.get('/reset/:token', resetPasswordPage)
 authRouter.post('/reset/:token', resetPassword)
-
-
-

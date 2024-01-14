@@ -42,7 +42,10 @@ export function activate(req: Request, res: Response, next: NextFunction) {
                             if (req.session.user && req.session.user.user_id === token.user_id) {
                                 req.session.user.activated = true;
                             }
-                            res.render('activation-success', { user: req.session.user, username: "haha" });
+                            res.render('success', {
+                                user: req.session.user,
+                                message: 'Account activated successfully'
+                            });
                         }
                     }
                 })

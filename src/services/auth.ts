@@ -66,7 +66,11 @@ export function register(req: Request, res: Response, next: NextFunction) {
                 privilege: user.privilege,
                 activated: false
             }
-            res.render('register-success', { user: req.session.user })
+            res.render('success', {
+                user: req.session.user,
+                message: "Account created successfully, check your email to activate it"
+            }
+            )
         }
     });
 }

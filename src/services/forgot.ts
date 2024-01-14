@@ -32,7 +32,10 @@ export function sendForgotPasswordEmail(req: Request, res: Response, next: NextF
                     subject: 'Reset your password',
                     text: `Please click the following link to reset your password: http://localhost:3001/auth/reset/${token}`,
                 });
-                res.render('forgot-sent', { user: req.session.user, email: req.body.email });
+                res.render('success', {
+                    user: req.session.user,
+                    message: 'Check your email for a link to reset your password'
+                });
             }
         })
     })
@@ -68,7 +71,7 @@ export function resetPassword(req: Request, res: Response, next: NextFunction) {
                             if (!user) {
                                 next(new Error('User not found'));
                             } else {
-                                res.render('reset-success', { user: req.session.user, username: user.username });
+                                res.render('success', { user: req.session.user, message: 'Password reset successfully' })
                             }
                         }
                     })
