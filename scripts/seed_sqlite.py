@@ -8,7 +8,7 @@ DB_FILE = '../data/db.sqlite3'
 def cleanup(cursor):
     cursor.execute('DROP TABLE IF EXISTS cities')
     cursor.execute('DROP TABLE IF EXISTS users')
-    cursor.execute('DROP TABLE IF EXISTS activations')
+    cursor.execute('DROP TABLE IF EXISTS tokens')
 
 
 def create_tables(cursor):
@@ -37,11 +37,12 @@ def create_tables(cursor):
         privilege INTEGER DEFAULT 0 \
     )")
 
-    cursor.execute('''CREATE TABLE IF NOT EXISTS activations (
+    cursor.execute('''CREATE TABLE IF NOT EXISTS tokens (
         id INTEGER PRIMARY KEY,
         user_id INTEGER,
         activation_token TEXT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        purpose TEXT,
         FOREIGN KEY(user_id) REFERENCES users(id)
     )''')
 

@@ -1,18 +1,13 @@
 import { NextFunction, Request, Response } from "express";
-import { createTransport } from "nodemailer";
 import { User } from "../models/User";
 import { v4 } from 'uuid';
-import { ActivationModel } from "../models/Activation";
+import { TokenModel } from "../models/Token";
 import { UserModel } from "../models/User";
-
-const transporter = createTransport({
-    host: "localhost",
-    port: 1025
-});
+import { transporter } from "./email";
 
 export const sendActivationEmail = (user: User) => {
     const token = v4();
-    ActivationModel.create(user.id, token, (err, activation) => {
+    TokenModel.create(user.id, token, "activation", (err, activation) => {
         if (err) { console.error(err); }
         else {
             const url = `http://localhost:3001/auth/activate/${token}`;
@@ -28,23 +23,23 @@ export const sendActivationEmail = (user: User) => {
 
 
 export function activate(req: Request, res: Response, next: NextFunction) {
-    ActivationModel.get(req.params.token, (err, activation) => {
+    TokenModel.get(req.params.token, (err, token) => {
         if (err) { next(err); }
-        else if (!activation) {
+        else if (!token || token.purpose !== "activation") {
             res.render('status/401', { user: req.session.user, error: 'Invalid token' });
         } else {
             const DAY = 24 * 60 * 60 * 1000;
-            console.log(activation.created_at);
-            if (Date.now() - new Date(activation.created_at).getMilliseconds() < DAY) {
+            console.log(token.created_at);
+            if (Date.now() - new Date(token.created_at).getMilliseconds() < DAY) {
                 res.render('status/401', { user: req.session.user, error: 'Token expired' });
             } else {
-                UserModel.update(activation.user_id, { email_verified: true }, (err, user) => {
+                UserModel.update(token.user_id, { email_verified: true }, (err, user) => {
                     if (err) { next(err); }
                     else {
                         if (!user) {
                             next(new Error('User not found'));
                         } else {
-                            if (req.session.user && req.session.user.user_id === activation.user_id) {
+                            if (req.session.user && req.session.user.user_id === token.user_id) {
                                 req.session.user.activated = true;
                             }
                             res.render('activation-success', { user: req.session.user, username: "haha" });
