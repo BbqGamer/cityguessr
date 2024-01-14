@@ -20,14 +20,16 @@ export interface City {
 type Callback<T> = (error: any, city?: T) => void;
 
 export class CityModel {
-    static getAll(cb: Callback<City[]>) {
+    static getAll(offset: number, limit: number, cb: Callback<City[]>) {
         const cols = [
             'id', 'name', 'url', 'country_name', 'country_url', 'country_flag_url', 'longitude',
             'latitude', 'description', 'infobox', 'added_by', 'added_by', 'added_at'
         ].map(col => 'cities.' + col)
-        const query = `SELECT ${cols}, users.username AS added_by_username FROM cities JOIN users ON cities.added_by = users.id;`;
+        const query = `SELECT ${cols}, users.username AS added_by_username 
+                        FROM cities JOIN users ON cities.added_by = users.id
+                        LIMIT ? OFFSET ?`;
 
-        db.all(query, (err, rows: City[]) => {
+        db.all(query, [limit, offset], (err, rows: City[]) => {
             if (err) { return cb(err); }
             cb(null, rows);
         });

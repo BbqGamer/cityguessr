@@ -1,12 +1,13 @@
 <div class="city-list">
     <% cities.forEach(function(city) { %>
         <%- include('city-card', { city: city }) %>
-    <% }); %>
+            <% }); %>
 </div>
 <style>
     .city-list {
         display: flex;
         flex-wrap: wrap;
-        justify-content: space-around;
+        gap: 20px;
+        margin: 20px;
     }
 </style>

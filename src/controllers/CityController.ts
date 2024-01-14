@@ -1,13 +1,21 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { CityModel } from "../models/City";
 
-
 export class CityController {
     static async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
-        CityModel.getAll((err, cities) => {
-            if (err) { next(err); } else {
-                res.render('cities', { user: req.session.user, cities: cities });
-            }
+        const PAGE_SIZE = 8;
+        CityModel.getAll(0, 1000, (err, cities) => {
+            if (err) { return next(err); }
+            if (!cities) { return res.sendStatus(404); }
+            const page = req.query.page ? Number(req.query.page) : 1;
+            const start = (page - 1) * PAGE_SIZE;
+            const end = start + PAGE_SIZE;
+            res.render('cities', {
+                user: req.session.user,
+                cities: cities.slice(start, end),
+                page: page,
+                totalPages: Math.ceil(cities.length / PAGE_SIZE)
+            });
         });
     }
 
