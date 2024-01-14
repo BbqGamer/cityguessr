@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { authenticate, createUser } from '../../services/auth';
+import { authenticate, createUser } from '../services/auth';
 
 export class AuthController {
     static async loginPage(req: Request, res: Response) {
@@ -66,15 +66,5 @@ export class AuthController {
             req.session.destroy((err) => { next(err); });
         }
         res.redirect('/');
-    }
-
-    static async resetPasswordPage(req: Request, res: Response) {
-        var error = '';
-        if (!req.params.token) { error = 'No token provided'; }
-        res.render('reset', { user: req.session.user, token: req.params.token, error: '' });
-    }
-
-    static async forgotPasswordPage(req: Request, res: Response) {
-        res.render('forgot', { user: req.session.user, error: '' });
     }
 }

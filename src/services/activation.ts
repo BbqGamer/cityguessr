@@ -1,11 +1,10 @@
-import { NextFunction, Request, Response } from "express";
 import { User } from "../models/User";
 import { v4 } from 'uuid';
 import { TokenModel } from "../models/Token";
 import { UserModel } from "../models/User";
 import { transporter } from "./email";
 
-export function sendActivationEmail(user: User, cb: (result: Error | null) => void) {
+export function sendActivationEmail(user: User, cb: (err?: Error) => void) {
     const token = v4();
     TokenModel.create(user.id, token, "activation", (err, activation) => {
         if (err) { return cb(err); }
@@ -20,28 +19,22 @@ export function sendActivationEmail(user: User, cb: (result: Error | null) => vo
 }
 
 
-export function activate(req: Request, res: Response, next: NextFunction) {
-    TokenModel.get(req.params.token, (err, token) => {
-        if (err) { return next(err); }
+export function activateAccount(token: string, cb: (err?: Error, message?: string, user_id?: number) => void) {
+    TokenModel.get(token, (err, token) => {
+        if (err) { return cb(err); }
         if (!token || token.purpose !== "activation") {
-            return res.render('status/401', { user: req.session.user, error: 'Invalid token' });
+            return cb(undefined, 'Invalid token');
         }
 
         const DAY = 24 * 60 * 60 * 1000;
         if (Date.now() - new Date(token.created_at).getMilliseconds() < DAY) {
-            return res.render('status/401', { user: req.session.user, error: 'Token expired' });
+            return cb(undefined, 'Token expired');
         }
 
         UserModel.update(token.user_id, { email_verified: true }, (err, user) => {
-            if (err) { return next(err); }
-            if (!user) { return next(new Error('User not found')); }
-            if (req.session.user && req.session.user.user_id === token.user_id) {
-                req.session.user.activated = true;
-            }
-            res.render('success', {
-                user: req.session.user,
-                message: 'Account activated successfully'
-            });
+            if (err) { return cb(err); }
+            if (!user) { return cb(undefined, 'User not found') }
+            cb(undefined, 'Account created successfully', token.user_id);
         })
     })
 }
