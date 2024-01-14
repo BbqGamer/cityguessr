@@ -1,0 +1,8 @@
+<span class="username <% if (user.privilege) { %>admin<% } %>">
+    <%= user.username %>
+</span>
+<% if (user.activated) { %>
+    <span class="verified">✓</span>
+<% } else { %>
+    <span class="not-verified">✗</span>
+<% }; %>

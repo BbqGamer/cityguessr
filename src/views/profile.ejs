@@ -12,10 +12,10 @@
     <%- include('components/header') %>
     <div class="container">
         <div class="user">
+            <h1>Profile:</h1>
             <ul>
-                <li>Username: <%= profile.username %></li>
+                <li>Username: <%- include('components/username') %> </li>
                 <li>Email: <%= profile.email %></li>
-                <li>Verified: <%= profile.email_verified %></li>
             </ul>
         </div>
     </div>

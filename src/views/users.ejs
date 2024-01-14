@@ -18,6 +18,7 @@
                     <th>Username</th>
                     <th>Email</th>
                     <th>Email verified</th>
+                    <th>Privilege level</th>
                 </tr>
             </thead>
             <tbody>
@@ -29,11 +30,15 @@
                         <td>
                             <%= user.username %>
                         </td>
+                        </td>
                         <td>
                             <%= user.email %>
                         </td>
                         <td>
                             <%= user.email_verified %>
+                        </td>
+                        <td>
+                            <%= user.privilege %>
                         </td>
                     </tr>
                     <% }); %>
