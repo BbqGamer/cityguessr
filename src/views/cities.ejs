@@ -9,6 +9,11 @@
 
 <body>
     <%- include('components/header') %>
+    <form action="/cities" method="POST">
+        <input type="text" name="query" placeholder="Natural language query">
+        <input type="number" name="n_results", min="1", max="20" style="width: 50px;">
+        <button type="submit">Search</button>
+    </form>
     <%- include('components/city-list') %>
     <ul class="pagination">
         <% for (let i=1; i <=totalPages; i++) { %>
@@ -34,6 +39,23 @@
         width: 40px;
         height: 40px;
         text-align: center;
+    }
+
+    form {
+        margin: 15px;
+        vertical-align: middle;
+    }
+
+    form button {
+        margin: 0;
+        width: 100px;
+        height: 30px;
+        font-size: 15px;
+    }
+    
+    input {
+        width: 500px;
+        height: 30px;
     }
 </style>
 

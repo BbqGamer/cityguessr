@@ -22,6 +22,10 @@ declare module 'express-session' {
             privilege: number;
             activated: boolean;
         }
+        filters: {
+            ids: number[];
+            distances: number[];
+        }
     }
 }
 

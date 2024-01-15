@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { CityModel } from "../models/City";
+import { closestCities } from "../services/chroma/collection";
 import config from '../../config.json'
 
 export class CityController {
@@ -29,8 +30,25 @@ export class CityController {
             }
         });
     }
+
+    static async ragQuery(req: Request, res: Response, next: NextFunction): Promise<void> {
+        const query = req.body.query;
+        const [err, ids, distances] = await closestCities(query, req.body.n_results)
+        if (err) { return next(err); }
+        if (!req.session.filters) {
+            req.session.filters = {
+                ids: [],
+                distances: []
+            }
+        }
+        console.log(ids, distances)
+        req.session.filters.ids = ids;
+        req.session.filters.distances = distances;
+        res.redirect('/cities');
+    }
 }
 
 export const cityRouter = Router();
 cityRouter.get('/', CityController.getAll);
+cityRouter.post('/', CityController.ragQuery);
 cityRouter.get('/:id', CityController.getOne);
