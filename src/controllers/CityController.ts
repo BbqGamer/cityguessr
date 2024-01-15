@@ -9,6 +9,14 @@ export class CityController {
         CityModel.getAll(0, 1000, (err, cities) => {
             if (err) { return next(err); }
             if (!cities) { return res.sendStatus(404); }
+            if (req.query.clear) {
+                delete req.session.filters;
+            }
+            if (req.session.filters) {
+                const ids = req.session.filters.ids;
+                console.log("Filtering cities", ids)
+                cities = cities.filter(city => ids.includes(city.id))
+            }
             const page = req.query.page ? Number(req.query.page) : 1;
             const start = (page - 1) * PAGE_SIZE;
             const end = start + PAGE_SIZE;
