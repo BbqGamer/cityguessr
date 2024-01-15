@@ -16,6 +16,14 @@ export class CityController {
                 const ids = req.session.filters.ids;
                 console.log("Filtering cities", ids)
                 cities = cities.filter(city => ids.includes(city.id))
+                cities = cities.sort((a, b) => {
+                    const a_index = ids.indexOf(a.id);
+                    const b_index = ids.indexOf(b.id);
+                    return a_index - b_index;
+                })
+                for (let i = 0; i < cities.length; i++) {
+                    cities[i].similarity = (1 - req.session.filters.distances[i]).toFixed(2);
+                }
             }
             const page = req.query.page ? Number(req.query.page) : 1;
             const start = (page - 1) * PAGE_SIZE;

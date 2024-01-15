@@ -15,6 +15,7 @@ export interface City {
     added_by: number;
     added_by_username: string;
     added_at: Date;
+    similarity: string | null; // used for search
 }
 
 const cols = [

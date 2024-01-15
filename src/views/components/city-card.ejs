@@ -12,6 +12,9 @@
     <div>
         <p>Added by: <%= city.added_by_username %></p>
         <p>Added at: <%= city.added_at %></p>
+        <% if (city.similarity) { %>
+            <p>Similarity to query: <%= city.similarity %></p>
+        <% } %>
     </div>
     <style>
         .city-card {
