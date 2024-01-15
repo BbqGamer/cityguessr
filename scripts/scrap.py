@@ -49,14 +49,14 @@ def scrape_all_cities():
     for tr in tbody.find_all('tr'):
         tds = tr.find_all('td')
 
-        if len(tds) < 2:
+        if len(tds) < 1:
             print("Skipping empty row")
             continue
 
         if rowspan_city == 0:
             city = tds[0]
 
-        if rowspan_country == 0:
+        if rowspan_country == 0 and len(tds) > 1:
             country = tds[1]
 
         city_a = city.find('a')

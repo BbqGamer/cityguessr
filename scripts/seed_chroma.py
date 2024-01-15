@@ -25,20 +25,19 @@ if __name__ == "__main__":
         model_name="text-embedding-ada-002"
     )
 
-    collections = client.list_collections()
-    if 'cities' not in collections:
-        client.create_collection('cities')
-
+    client.create_collection(name='cities')
     collection = client.get_collection(name='cities')
 
     ids = []
     documents = []
-    for city in get_all_cities()[:5]:
+    for city in get_all_cities():
         city_id = city[0]
         country_name = city[3]
-        desc = city[-2]
-        infobox = city[-1]
+        desc = city[8]
+        infobox = city[9]
         to_embed = "\n".join([country_name, desc, infobox])
+        to_embed = to_embed.replace('\n', ' ').replace(
+            '\r', '').replace('\t', '').replace('•', '')
         ids.append(str(city_id))
         documents.append(to_embed)
 
