@@ -22,7 +22,7 @@
     <ul class="pagination">
         <% if (totalPages > 1) { %>
             <% for (let i=1; i <=totalPages; i++) { %>
-                <button onclick="window.location.href='/cities?page=<%= i %>'">
+                <button onclick="window.location.href='/cities?page=<%= i %>'" <% if (i == page) { %>style='background-color: gray;'<% } %>>
                     <%= i %>
                 </button>
             <% } %>
