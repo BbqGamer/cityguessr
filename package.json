@@ -12,7 +12,8 @@
     "build": "npm-run-all clean tsc copy-assets scss",
     "dev:start": "npm-run-all build start",
     "dev": "nodemon --watch src -e ts,ejs,scss --exec npm run dev:start",
-    "start": "node dist/src/app.js"
+    "start": "node dist/src/app.js",
+    "chroma": "chroma run --path data/chroma.db"
   },
   "keywords": [],
   "author": "",
