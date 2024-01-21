@@ -98,4 +98,18 @@ export class CityModel {
             cb(null, city);
         });
     }
+
+    static deleteOne(city_id: number, user: any, cb: Callback<null>) {
+        let query = 'DELETE FROM cities WHERE id = ?';
+        let params = [city_id];
+        if (user.privilege < 1) {
+            query = query + ` AND added_by = ?`
+            params.push(user.user_id)
+        }
+
+        db.run(query, params, function (err) {
+            if (err) { return cb(err); }
+            cb(null);
+        });
+    }
 }

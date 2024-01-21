@@ -37,13 +37,11 @@ export class UserController {
                 if (req.session.user.privilege > 0) {
                     CityModel.getAll(0, 1000, (err, cities) => {
                         if (err) { return next(err); }
-                        console.log(cities)
                         res.render('profile', { user: req.session.user, profile: user, cities: cities });
                     })
                 } else {
                     CityModel.getByUser(req.session.user.user_id, (err, cities) => {
                         if (err) { return next(err); }
-                        console.log(cities)
                         res.render('profile', { user: req.session.user, profile: user, cities: cities });
                     })
                 }

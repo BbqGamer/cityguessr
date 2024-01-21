@@ -79,6 +79,23 @@ export class CityController {
         req.session.filters.distances = distances;
         res.redirect('/cities');
     }
+
+    static async deleteCity(req: Request, res:Response, next: NextFunction): Promise<void> {
+        if (!req.session.user) {
+            res.sendStatus(403);
+            return next();
+        }
+        if (req.session.user.activated === false) {
+            res.sendStatus(403);
+            return next();
+        }
+        const city_id = Number(req.params.id)
+        console.log("Deleting city with id", city_id, "by user", req.session.user.user_id, "...")
+        CityModel.deleteOne(city_id, req.session.user, (err) => {
+            if (err) { return next(err); }
+        })
+        res.redirect('/users/profile');
+    }
 }
 
 export const cityRouter = Router();
@@ -90,3 +107,4 @@ cityRouter.post('/add', CityController.addOne);
 cityRouter.get('/', CityController.getAll);
 cityRouter.post('/', CityController.ragQuery);
 cityRouter.get('/:id', CityController.getOne);
+cityRouter.get('/:id/delete', CityController.deleteCity);

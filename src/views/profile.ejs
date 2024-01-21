@@ -23,7 +23,8 @@
                 <div class="city-block">
                     <a href='/cities/<%= city.id %>'><h1><%= city.name %></h1>
                     <%= city.country_name %></li></a>
-                    <button type="button" onclick="window.location.href='/cities/delete/<%= city.id %>'">Delete</button>
+                    <%= city.id %>
+                    <button onclick="window.location.href='/cities/<%= city.id %>/delete'">Delete</button>
                 </div>  
             <% }); %>
         </div>
