@@ -13,7 +13,9 @@
     "dev:start": "npm-run-all build start",
     "dev": "nodemon --watch src -e ts,ejs,scss --exec npm run dev:start",
     "start": "node dist/src/app.js",
-    "chroma": "chroma run --path data/chroma.db"
+    "chroma": "chroma run --path data/chroma.db",
+    "smtp": "python3 -m smtpd -c DebuggingServer -n localhost:1025",
+    "all": "npm-run-all start smtp chroma"
   },
   "keywords": [],
   "author": "",

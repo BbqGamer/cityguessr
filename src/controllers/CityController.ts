@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response, Router } from "express";
-import { CityModel } from "../models/City";
+import { City, CityModel } from "../models/City";
 import { closestCities } from "../services/chroma/collection";
 import config from '../../config.json'
 
@@ -47,6 +47,23 @@ export class CityController {
         });
     }
 
+    static async addOne(req: Request, res: Response, next: NextFunction): Promise<void> {
+        console.log("Adding city")
+        if (!req.session.user) {
+            res.sendStatus(403);
+            return next();
+        }
+        if (req.session.user.activated === false) {
+            res.sendStatus(403);
+            return next();
+        }
+        const city = req.body;
+        CityModel.addOne(city, req.session.user.user_id, (err, city) => {
+            if (err) { return next(err); }
+            res.redirect('/cities');
+        })
+    }
+
     static async ragQuery(req: Request, res: Response, next: NextFunction): Promise<void> {
         const query = req.body.query;
         const [err, ids, distances] = await closestCities(query, req.body.n_results)
@@ -65,6 +82,11 @@ export class CityController {
 }
 
 export const cityRouter = Router();
+cityRouter.get('/add', (req, res) => {
+    res.render('add_city', { user: req.session.user });
+})
+cityRouter.post('/add', CityController.addOne);
+
 cityRouter.get('/', CityController.getAll);
 cityRouter.post('/', CityController.ragQuery);
 cityRouter.get('/:id', CityController.getOne);

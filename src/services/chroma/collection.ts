@@ -62,6 +62,6 @@ export async function closestCities(query: string, n_results: number): Promise<R
         const ids = result.ids[0].map(id => Number(id))
         return [null, ids, result.distances[0]]
     } catch (err) {
-        return err
+        return [err, [], []]
     }
 }

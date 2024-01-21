@@ -11,3 +11,7 @@ indexRouter.use('/users', userRouter);
 indexRouter.use('/auth', authRouter);
 
 indexRouter.get('/', CityController.getAll);
+
+indexRouter.get('/game', (req, res) => {
+    res.render('game', { user: req.session.user });
+})

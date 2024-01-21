@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cityguessr</title>
+    <link rel="stylesheet" href="/css/base.css">
+    <link rel="stylesheet" href="/css/form.css">
+</head>
+
+<body>
+    <%- include('components/header') %>
+    <div class="container">
+        <form action="/cities/add" method="post">
+            <section>
+                <div>
+                    <h1>Add new city</h1>
+                </div>
+            </section>
+            <section>
+                <label for="name">City name <span>*</span></label>
+                <input id="name" name="name" type="text" required autofocus>
+            </section>
+            <section>
+                <label for="country_name">Country name <span>*</span></label>
+                <input id="country_name" name="country_name" type="text">
+            </section>
+            <section>
+                <label for="longitude">Longitude</label>
+                <input id="longitude" name="longitude" type="text">
+            </section>
+            <section>
+                <label for="latitude">latitude</label>
+                <input id="latitude" name="latitude" type="text">
+            </section>
+            <section>
+                <label for="description">Description <span>*</span></label>
+                <textarea id="description" name="description" type="text"></textarea>
+            </section>
+            <section>
+                <label for="infobox">Infobox</label>
+                <textarea id="infobox" name="infobox" type="text"></textarea>
+            </section>
+            <button type="submit">Add city</button>
+        </form>
+    </div>
+</body>
+
+<style>
+    form {
+        width: 1000px;
+        margin: 16px;
+    }
+
+    textarea {
+        width: 100%;
+        height: 200px;
+    }
+
+    span {
+        color: red;
+    }
+</style>
+</html>

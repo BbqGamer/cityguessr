@@ -3,7 +3,7 @@
         <h2 style="font-weight: bold;"><%= city.name %></h2>
         <p style="vertical-align: middle;">
             <%= city.country_name %>
-                <img src="<%= city.country_flag_url %>" alt="<%= city.country_name %>">
+                <% if (city.country_flag_url) { %><img src="<%= city.country_flag_url %>" alt="<%= city.country_name %>"><% } %>
         </p>
     </div>
     <div>

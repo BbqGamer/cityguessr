@@ -14,7 +14,7 @@ export interface City {
     infobox: string;
     added_by: number;
     added_by_username: string;
-    added_at: Date;
+    added_at: string;
     similarity: string | null; // used for search
 }
 
@@ -50,6 +50,36 @@ export class CityModel {
             } else {
                 return cb(null, null);
             }
+        });
+    }
+
+    static addOne(city: Partial<City>, user_id: number, cb: Callback<Partial<City>>) {
+        const query = `INSERT INTO cities (name, url, country_name, country_url, country_flag_url, longitude, latitude, description, infobox, added_by, added_at)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+
+        const defaultCity: Partial<City> = {
+            name: '',
+            url: '',
+            country_name: '',
+            country_url: '',
+            country_flag_url: '',
+            longitude: 0,
+            latitude: 0,
+            description: '',
+            infobox: '',
+            added_by: user_id,
+            added_at: new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '') 
+        }
+
+        city = { ...defaultCity, ...city };
+        console.log("Adding city", city) 
+        db.run(query, [
+            city.name, city.url, city.country_name, city.country_url, city.country_flag_url,
+            city.longitude, city.latitude, city.description, city.infobox, city.added_by, city.added_at
+        ], function (err) {
+            if (err) { return cb(err); }
+            city.id = this.lastID;
+            cb(null, city);
         });
     }
 }
