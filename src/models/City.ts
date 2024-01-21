@@ -53,6 +53,22 @@ export class CityModel {
         });
     }
 
+    static getByUser(user_id: number, cb: Callback<City | null>) {
+
+        const query = `SELECT ${cols}, users.username AS added_by_username
+                        FROM cities JOIN users ON cities.added_by = users.id
+                        WHERE cities.added_by = ?`;
+
+        db.all(query, [user_id], (err, row: City) => {
+            if (err) { return cb(err); }
+            if (row) {
+                return cb(null, row);
+            } else {
+                return cb(null, null);
+            }
+        });
+    }
+
     static addOne(city: Partial<City>, user_id: number, cb: Callback<Partial<City>>) {
         const query = `INSERT INTO cities (name, url, country_name, country_url, country_flag_url, longitude, latitude, description, infobox, added_by, added_at)
                         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;

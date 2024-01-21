@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { UserModel } from "../models/User";
+import { CityModel } from "../models/City";
 
 
 export class UserController {
@@ -29,7 +30,23 @@ export class UserController {
         UserModel.get('id', req.session.user.user_id, (err, user) => {
             if (err) { next(err) }
             else {
-                res.render('profile', { user: req.session.user, profile: user });
+                if (!req.session.user) {
+                    res.redirect('/auth/login');
+                    return;
+                }
+                if (req.session.user.privilege > 0) {
+                    CityModel.getAll(0, 1000, (err, cities) => {
+                        if (err) { return next(err); }
+                        console.log(cities)
+                        res.render('profile', { user: req.session.user, profile: user, cities: cities });
+                    })
+                } else {
+                    CityModel.getByUser(req.session.user.user_id, (err, cities) => {
+                        if (err) { return next(err); }
+                        console.log(cities)
+                        res.render('profile', { user: req.session.user, profile: user, cities: cities });
+                    })
+                }
             }
         });
     }

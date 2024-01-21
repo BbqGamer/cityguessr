@@ -18,7 +18,48 @@
                 <li>Email: <%= profile.email %></li>
             </ul>
         </div>
+        <div class="users-cities">
+            <% cities.forEach(function(city) { %>
+                <div class="city-block">
+                    <a href='/cities/<%= city.id %>'><h1><%= city.name %></h1>
+                    <%= city.country_name %></li></a>
+                    <button type="button" onclick="window.location.href='/cities/delete/<%= city.id %>'">Delete</button>
+                </div>  
+            <% }); %>
+        </div>
     </div>
 </body>
+
+<style>
+    h1 {
+        font-weight: bold;
+    }
+
+    .container {
+        flex-direction: column;
+    }
+
+    a {
+        text-decoration: none;
+        color: black;
+    }
+
+    .users-cities {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .city-block {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        border: 1px solid black;
+        border-radius: 5px;
+        padding: 10px;
+        margin: 10px;
+    }
+</style>
 
 </html>
