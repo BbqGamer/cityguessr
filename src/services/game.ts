@@ -5,7 +5,6 @@ import { getRandomCity } from './cityRetrieval';
 
 
 interface QueueUser extends SessionUser {
-    socket: Socket;
     ready: boolean;
     points: number;
     guess: string;
@@ -33,12 +32,12 @@ export function handleConnection(io: Server, socket: Socket) {
         }
         const user: QueueUser = {
             ...session.user,
-            socket: socket,
             ready: false,
             points: 0,
             guess: ""
         }
-        usersInQueue.push(session.user);
+        console.log(user)
+        usersInQueue.push(user);
 
         io.emit('queue', usersInQueue);
     }

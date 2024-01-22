@@ -14,7 +14,7 @@ export async function GPTDescribeCity(city: City) {
                     `in a way that it is not obvious but that user might be able to guess it
                     Use many details related to the city but do not reveal its name or country `
 
-    const query = city.description + prompt + city.name + 'is a city';
+    const query = city.description + prompt + 'X is a city';
     console.log("Querying Openai ", query);
     const response = await openai.chat.completions.create({
         model: "gpt-3.5-turbo",
