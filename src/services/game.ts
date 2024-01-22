@@ -2,12 +2,15 @@ import { Server, Socket } from 'socket.io'
 import { SessionUser } from '../models/User';
 import { GPTDescribeCity } from './openai';
 import { getRandomCity } from './cityRetrieval';
+import { closestCities } from './chroma/collection';
+import { City, CityModel } from '../models/City';
 
 
 interface QueueUser extends SessionUser {
     ready: boolean;
     points: number;
-    guess: string;
+    guess: number;
+    guessed: string;
 }
 
 let usersInQueue: QueueUser[] = [];
@@ -34,7 +37,8 @@ export function handleConnection(io: Server, socket: Socket) {
             ...session.user,
             ready: false,
             points: 0,
-            guess: ""
+            guess: -1,
+            guessed: ""
         }
         console.log(user)
         usersInQueue.push(user);
@@ -56,7 +60,8 @@ export function handleConnection(io: Server, socket: Socket) {
             gameStarted = true;
             io.emit('game-start', usersInQueue);
             usersInQueue.forEach(u => u.ready = false);
-            usersInQueue.forEach(u => u.guess = "");
+            usersInQueue.forEach(u => u.guess = -1);
+            usersInQueue.forEach(u => u.guessed = "");
             io.emit('queue', usersInQueue);
             var counter = 30;
             console.log('Game started');
@@ -81,17 +86,54 @@ export function handleConnection(io: Server, socket: Socket) {
                     var countdown = setInterval(() => {
                         counter--
                         io.sockets.emit('counter', counter);
-                        console.log(counter);
-                        if (counter === 0) {
-                            io.emit('game-end', city);
+                        if (counter === 0 || usersInQueue.every(u => u.guess !== -1)) {
                             clearInterval(countdown);
-                            gameStarted = false;
+                            // round end
+                            closestCities(description, 5).then(res => {
+                                err = res[0];
+                                const closest = res[1];
+                                var close: number[];
+                                if (err || !closest) { close = []; } else { close = closest; }
+                                close = close.filter(c => c !== city.id);
+                                CityModel.getAll(0, 1000, (err, allCities) => {
+                                    if (err) { return console.log(err); }
+                                    var citiesAll: City[];
+                                    if (!allCities) { citiesAll = []; } else { citiesAll = allCities; }
+                                    const closeCities = closest.map(id => citiesAll.find(c => c.id === id)); 
+                                    io.emit('game-end', city, closeCities);
+                                    for (let i = 0; i < usersInQueue.length; i++) {
+                                        const user = usersInQueue[i];
+                                        console.log("User guessed: ", user.guess, ", Correct answer: ", city.id)
+                                        if (user.guess === city.id) {
+                                            user.points += 3;
+                                        } else if (close.includes(user.guess)) {
+                                            console.log("Close cities", closeCities)
+                                            user.points += 1;
+                                        }
+                                    }
+                                    gameStarted = false;
+                                    for (let i = 0; i < usersInQueue.length; i++) {
+                                        usersInQueue[i].guessed = citiesAll.find(c => c.id === usersInQueue[i].guess)?.name || "";
+                                        usersInQueue[i].guess = -1;
+                                    }
+                                    io.emit('queue', usersInQueue);
+                                })
+                            })
                         }
                     }, 1000);
                 });
             })
         }
     });
+
+    socket.on('choice', (choice: number) => {
+        const user = usersInQueue.find(u => u.user_id === session.user.user_id);
+        if (user) {
+            user.guess = Number(choice);
+        }
+        console.log("Choice made: ", usersInQueue)
+        io.emit('queue', usersInQueue);
+    })
 
     socket.on('unready', () => {
         if (gameStarted) {

@@ -54,7 +54,6 @@ export async function closestCities(query: string, n_results: number): Promise<R
             nResults: n_results,
             queryTexts: query
         })
-        console.log(result);
 
         if (!result.distances) {
             return [new Error('No results found'), [], []]

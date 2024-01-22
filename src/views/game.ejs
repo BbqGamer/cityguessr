@@ -18,8 +18,8 @@
     <button onclick="ready()" class="ready" id="ready">Ready</button>
     <div id="city"></div>
     <select id="city-select" class="js-example-basic-single" name="state" style="display: none;">
-    <button onclick="choice()" class="ready" id="ready">Confirm choice</button>
     </select>
+    <button onclick="choice()" class="guess" id="guess" style="display: none;">Confirm choice</button>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
     <script>
@@ -35,6 +35,12 @@
                 if (queue[i].ready) {
                     qhtml += " (ready)"
                 }
+                if (queue[i].guess != -1) {
+                    qhtml += " (guessed)"
+                }
+                if (queue[i].guessed != '') {
+                    qhtml += " (guessed: " + queue[i].guessed + ")"
+                }
                 qhtml += "</li>"
             }
             qhtml += "</ul>"
@@ -47,14 +53,20 @@
         });
 
         function ready() {
-            button = document.getElementById('ready')
-            if (button.innerHTML == "Ready") {
-                button.innerHTML = "Unready"
+            readyButton = document.getElementById('ready')
+            if (readyButton.innerHTML == "Ready") {
+                readyButton.innerHTML = "Unready"
                 socket.emit('ready')
             } else {
-                button.innerHTML = "Ready"
+                readyButton.innerHTML = "Ready"
                 socket.emit('unready')
             }
+        }
+
+        function choice() {
+            var e = document.getElementById("city-select");
+            var city_id = e.options[e.selectedIndex].value;
+            socket.emit('choice', city_id)
         }
 
         socket.on('game-start', (game) => {
@@ -66,13 +78,26 @@
 
         socket.on('city', (description) => {
             document.getElementById('city').innerHTML = "X is a city " + description
+            document.getElementById('city-select').style.display = "block"
+            document.getElementById('guess').style.display = "block"
         })
 
-        socket.on('game-end', (city) => {
+        socket.on('game-end', (city, closeCities) => {
             button = document.getElementsByClassName('ready')[0]
             button.style.display = "block"
             document.getElementById('timer').innerHTML = ""
-            document.getElementById('city').innerHTML = "The answer was: " + city.name + " (" + city.country_name + ")"
+            console.log(closeCities)
+            answer = "The answer was: " + city.name + " (" + city.country_name + ") - 3 pts, <br>other close cities were: "
+            for (let i = 0; i < closeCities.length - 1; i++) {
+                if (closeCities[i] == null) {
+                    continue
+                }
+                answer += closeCities[i].name + ", "
+            }
+            answer += closeCities[closeCities.length - 1].name + " - 1 pt"
+            document.getElementById('city').innerHTML = answer 
+            document.getElementById('city-select').style.display = "none"
+            document.getElementById('guess').style.display = "none"
         })
 
         socket.on('counter', (count) => {
