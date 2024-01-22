@@ -11,16 +11,37 @@
 <body>
     <%- include('components/header') %>
     <h1>Cityguessr</h1>
-    <div id="users"></div>
-    <button onclick="ready()">Ready</button>
+    <div id="queue"></div>
+    <button onclick="ready()" class="ready">Ready</button>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
     <script>
         const socket = io();
         
         socket.on('queue', (queue) => {
-            document.getElementById('users').innerHTML = queue.map(user => user.username).join('<br>');
+            qhtml = "<ul>"
+            for (let i = 0; i < queue.length; i++) {
+                qhtml += "<li>"
+                qhtml += queue[i].username
+                if (queue[i].ready) {
+                    qhtml += " (ready)"
+                }
+                qhtml += "</li>"
+            }
+            qhtml += "</ul>"
+            document.getElementById('queue').innerHTML = qhtml
         });
+
+        function ready() {
+            button = document.getElementsByClassName('ready')[0]
+            if (button.innerHTML == "Ready") {
+                button.innerHTML = "Unready"
+                socket.emit('ready')
+            } else {
+                button.innerHTML = "Ready"
+                socket.emit('unready')
+            }
+        }
 
         socket.on('drop', (message) => {
             alert(message);
