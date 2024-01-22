@@ -7,6 +7,9 @@ export const indexRouter = Router();
 
 indexRouter.use('/cities', cityRouter);
 indexRouter.use('/game', (req, res) => {
+    if (!req.session.user || !req.session.user.activated) {
+        return res.redirect('/auth/login');
+    }
     res.render('game', { user: req.session.user });
 });
 

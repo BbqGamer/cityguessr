@@ -36,7 +36,7 @@ export function activateAccount(token: string, cb: (err?: Error, message?: strin
         UserModel.update(token.user_id, { email_verified: true }, (err, user) => {
             if (err) { return cb(err); }
             if (!user) { return cb(undefined, 'User not found') }
-            cb(undefined, 'Account created successfully', token.user_id);
+            cb(undefined, 'Account activated successfully', token.user_id);
         })
     })
 }
