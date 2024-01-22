@@ -24,12 +24,23 @@
                     <a href='/cities/<%= city.id %>'><h1><%= city.name %></h1>
                     <%= city.country_name %></li></a>
                     <%= city.id %>
-                    <button onclick="window.location.href='/cities/<%= city.id %>/delete'">Delete</button>
+                    <button onclick="confirmDeletion(<%= city.id %>, '<%= city.name %>')">Delete</button>
                 </div>  
             <% }); %>
         </div>
     </div>
 </body>
+<script>
+    function confirmDeletion(city_id, city_name) {
+        const userConfirmed = window.confirm("Are you sure you want to delete: " + city_name + "?");
+        if (userConfirmed) {
+            window.location.href = "/cities/"+ city_id + "/delete";
+        } else {
+            console.log("Operation cancelled by user.");
+        }
+    }
+
+</script>
 
 <style>
     h1 {
