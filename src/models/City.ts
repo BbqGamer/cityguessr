@@ -1,4 +1,5 @@
 import { db } from '../services/db';
+import { UserModel } from './User';
 
 
 export interface City {
@@ -111,5 +112,14 @@ export class CityModel {
             if (err) { return cb(err); }
             cb(null);
         });
+    }
+
+    static getRandomCity(cb: Callback<City>) {
+        CityModel.getAll(0, 1000, (err, cities) => {
+            if (err) { return cb(err); }
+            if (!cities) { return cb(null, undefined); }
+            const city = cities[Math.floor(Math.random() * cities.length)];
+            cb(null, city)
+        })
     }
 }

@@ -1,5 +1,7 @@
 import { Server, Socket } from 'socket.io'
 import { SessionUser } from '../models/User';
+import { CityModel } from '../models/City';
+
 
 interface QueueUser extends SessionUser {
     socket: Socket;
@@ -56,17 +58,24 @@ export function handleConnection(io: Server, socket: Socket) {
             var counter = 10;
             console.log('Game started');
             
-            io.sockets.emit('counter', counter);
-            var countdown = setInterval(() => {
-                counter--
+            // random city
+            CityModel.getRandomCity((err, city) => {
+                if (err) { return console.log(err); }
+                console.log(city);
+                io.emit('city', city);
+
                 io.sockets.emit('counter', counter);
-                console.log(counter);
-                if (counter === 0) {
-                    io.emit('game-end', usersInQueue);
-                    clearInterval(countdown);
-                    gameStarted = false;
-                }
-            }, 1000);
+                var countdown = setInterval(() => {
+                    counter--
+                    io.sockets.emit('counter', counter);
+                    console.log(counter);
+                    if (counter === 0) {
+                        io.emit('game-end', usersInQueue);
+                        clearInterval(countdown);
+                        gameStarted = false;
+                    }
+                }, 1000);
+            });
         }
     });
 

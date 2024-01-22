@@ -14,6 +14,7 @@
     <div id="timer"></div>
     <div id="queue"></div>
     <button onclick="ready()" class="ready" id="ready">Ready</button>
+    <div id="city"></div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
     <script>
@@ -54,6 +55,10 @@
             button = document.getElementsByClassName('ready')[0]
             button.innerHTML = "Ready"
             button.style.display = "none"
+        })
+
+        socket.on('city', (city) => {
+            document.getElementById('city').innerHTML = city.description
         })
 
         socket.on('game-end', (game) => {
