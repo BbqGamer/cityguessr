@@ -4,9 +4,17 @@ import path from 'path';
 import { db } from './services/db';
 import session from 'express-session';
 import config from '../config.json';
+import http from 'http';
+import { Server } from 'socket.io';
+import { handleConnection } from './services/game';
 
 
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server);
+
+io.on('connection', handleConnection);
+
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -47,7 +55,7 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     res.status(500).render('status/500', { user: req.session.user, error: err })
 });
 
-app.listen(3001, () => {
+server.listen(3001, () => {
     console.log('Server running on http://localhost:3001');
 })
 

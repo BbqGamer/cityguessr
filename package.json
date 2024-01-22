@@ -31,6 +31,7 @@
     "typescript": "^5.3.3"
   },
   "dependencies": {
+    "@types/socket.io": "^3.0.2",
     "chromadb": "^1.7.3",
     "ejs": "^3.1.9",
     "express": "^4.18.2",
@@ -38,6 +39,7 @@
     "node-fetch": "^3.3.2",
     "nodemailer": "^6.9.8",
     "openai": "^4.24.4",
+    "socket.io": "^4.7.4",
     "sqlite3": "^5.1.7",
     "uuid": "^9.0.1"
   }

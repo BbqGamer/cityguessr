@@ -6,6 +6,9 @@ import { authRouter } from './auth';
 export const indexRouter = Router();
 
 indexRouter.use('/cities', cityRouter);
+indexRouter.use('/game', (req, res) => {
+    res.render('game', { user: req.session.user });
+});
 
 indexRouter.use('/users', userRouter);
 indexRouter.use('/auth', authRouter);
