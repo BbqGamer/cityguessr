@@ -11,14 +11,16 @@
 <body>
     <%- include('components/header') %>
     <h1>Cityguessr</h1>
+    <div id="timer"></div>
     <div id="queue"></div>
-    <button onclick="ready()" class="ready">Ready</button>
+    <button onclick="ready()" class="ready" id="ready">Ready</button>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
     <script>
         const socket = io();
         
-        socket.on('queue', (queue) => {
+        function renderQueue(queue) {
+            console.log("rendering queue")
             qhtml = "<ul>"
             for (let i = 0; i < queue.length; i++) {
                 qhtml += "<li>"
@@ -29,11 +31,16 @@
                 qhtml += "</li>"
             }
             qhtml += "</ul>"
+            console.log(qhtml)
             document.getElementById('queue').innerHTML = qhtml
+        }
+
+        socket.on('queue', (queue) => {
+            renderQueue(queue);
         });
 
         function ready() {
-            button = document.getElementsByClassName('ready')[0]
+            button = document.getElementById('ready')
             if (button.innerHTML == "Ready") {
                 button.innerHTML = "Unready"
                 socket.emit('ready')
@@ -42,6 +49,22 @@
                 socket.emit('unready')
             }
         }
+
+        socket.on('game-start', (game) => {
+            button = document.getElementsByClassName('ready')[0]
+            button.innerHTML = "Ready"
+            button.style.display = "none"
+        })
+
+        socket.on('game-end', (game) => {
+            button = document.getElementsByClassName('ready')[0]
+            button.style.display = "block"
+            document.getElementById('timer').innerHTML = ""
+        })
+
+        socket.on('counter', (count) => {
+            document.getElementById('timer').innerHTML = "Remaining time: " + count + " seconds"
+        });
 
         socket.on('drop', (message) => {
             alert(message);

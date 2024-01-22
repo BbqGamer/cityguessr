@@ -4,6 +4,7 @@ import { SessionUser } from '../models/User';
 interface QueueUser extends SessionUser {
     socket: Socket;
     ready: boolean;
+    points: number;
 }
 
 let usersInQueue: QueueUser[] = [];
@@ -30,6 +31,7 @@ export function handleConnection(io: Server, socket: Socket) {
             ...session.user,
             socket: socket,
             ready: false,
+            points: 0,
         }
         usersInQueue.push(session.user);
 
@@ -44,12 +46,27 @@ export function handleConnection(io: Server, socket: Socket) {
         }
         if (user) {
             user.ready = true;
-            console.log(usersInQueue)
             io.emit('queue', usersInQueue);
         }
-        if (usersInQueue.length >= 2 && usersInQueue.every(u => u.ready)) {
+        if (usersInQueue.every(u => u.ready)) {
             gameStarted = true;
             io.emit('game-start', usersInQueue);
+            usersInQueue.forEach(u => u.ready = false);
+            io.emit('queue', usersInQueue);
+            var counter = 10;
+            console.log('Game started');
+            
+            io.sockets.emit('counter', counter);
+            var countdown = setInterval(() => {
+                counter--
+                io.sockets.emit('counter', counter);
+                console.log(counter);
+                if (counter === 0) {
+                    io.emit('game-end', usersInQueue);
+                    clearInterval(countdown);
+                    gameStarted = false;
+                }
+            }, 1000);
         }
     });
 
