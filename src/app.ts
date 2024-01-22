@@ -11,10 +11,6 @@ import { handleConnection } from './services/game';
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server);
-
-io.on('connection', handleConnection);
-
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
@@ -37,11 +33,13 @@ declare module 'express-session' {
     }
 }
 
-app.use(session({
+const sessionMiddleware = session({
     secret: config.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
-}))
+})
+
+app.use(sessionMiddleware);
 
 app.use('/', indexRouter);
 app.use((req: Request, res: Response) => {
@@ -54,6 +52,11 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     }
     res.status(500).render('status/500', { user: req.session.user, error: err })
 });
+
+const io = new Server(server);
+io.engine.use(sessionMiddleware);
+
+io.on('connection', handleConnection);
 
 server.listen(3001, () => {
     console.log('Server running on http://localhost:3001');
