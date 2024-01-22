@@ -55,16 +55,18 @@
             button = document.getElementsByClassName('ready')[0]
             button.innerHTML = "Ready"
             button.style.display = "none"
+            document.getElementById('city').innerHTML = "Waiting for question to generate..."
         })
 
-        socket.on('city', (city) => {
-            document.getElementById('city').innerHTML = city.description
+        socket.on('city', (description) => {
+            document.getElementById('city').innerHTML = description
         })
 
-        socket.on('game-end', (game) => {
+        socket.on('game-end', (city) => {
             button = document.getElementsByClassName('ready')[0]
             button.style.display = "block"
             document.getElementById('timer').innerHTML = ""
+            document.getElementById('city').innerHTML = "The answer was: " + city.name + " (" + city.country_name + ")"
         })
 
         socket.on('counter', (count) => {

@@ -1,6 +1,7 @@
 import { Server, Socket } from 'socket.io'
 import { SessionUser } from '../models/User';
-import { CityModel } from '../models/City';
+import { GPTDescribeCity } from './openai';
+import { getRandomCity } from './cityRetrieval';
 
 
 interface QueueUser extends SessionUser {
@@ -55,27 +56,35 @@ export function handleConnection(io: Server, socket: Socket) {
             io.emit('game-start', usersInQueue);
             usersInQueue.forEach(u => u.ready = false);
             io.emit('queue', usersInQueue);
-            var counter = 10;
+            var counter = 30;
             console.log('Game started');
             
             // random city
-            CityModel.getRandomCity((err, city) => {
+            getRandomCity("European cities", (err: any, city) => {
                 if (err) { return console.log(err); }
-                console.log(city);
-                io.emit('city', city);
-
-                io.sockets.emit('counter', counter);
-                var countdown = setInterval(() => {
-                    counter--
-                    io.sockets.emit('counter', counter);
-                    console.log(counter);
-                    if (counter === 0) {
-                        io.emit('game-end', usersInQueue);
-                        clearInterval(countdown);
-                        gameStarted = false;
+                if (!city) { return console.log('No city found'); }
+                
+                console.log('City: ', city.name, 'was chosen randomly')
+                GPTDescribeCity(city).then(description => {
+                    if (!description) {
+                        console.log('No description found');
+                        return io.emit('city', 'No description found');
                     }
-                }, 1000);
-            });
+                    io.emit('city', description);
+
+                    io.sockets.emit('counter', counter);
+                    var countdown = setInterval(() => {
+                        counter--
+                        io.sockets.emit('counter', counter);
+                        console.log(counter);
+                        if (counter === 0) {
+                            io.emit('game-end', city);
+                            clearInterval(countdown);
+                            gameStarted = false;
+                        }
+                    }, 1000);
+                });
+            })
         }
     });
 
