@@ -10,6 +10,13 @@ export interface User {
     privilege: number;
 }
 
+export interface SessionUser {
+    user_id: number;
+    username: string;
+    privilege: number;
+    activated: boolean;
+}
+
 type Callback<T> = (error: any, user?: T, message?: string) => void;
 
 export class UserModel {

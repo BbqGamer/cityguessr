@@ -17,6 +17,16 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
     <script>
         const socket = io();
+        
+        socket.on('queue', (queue) => {
+            document.getElementById('users').innerHTML = queue.map(user => user.username).join('<br>');
+        });
+
+        socket.on('drop', (message) => {
+            alert(message);
+            window.location = '/';
+        });
+
     </script>
 </body>
 

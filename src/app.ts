@@ -7,6 +7,7 @@ import config from '../config.json';
 import http from 'http';
 import { Server } from 'socket.io';
 import { handleConnection } from './services/game';
+import { SessionUser } from './models/User'
 
 
 const app = express();
@@ -20,12 +21,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 declare module 'express-session' {
     interface SessionData {
-        user?: {
-            user_id: number;
-            username: string;
-            privilege: number;
-            activated: boolean;
-        }
+        user?: SessionUser,
         filters: {
             ids: number[];
             distances: number[];
@@ -56,7 +52,9 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 const io = new Server(server);
 io.engine.use(sessionMiddleware);
 
-io.on('connection', handleConnection);
+io.on('connection', (socket) => {
+    handleConnection(io, socket);
+});
 
 server.listen(3001, () => {
     console.log('Server running on http://localhost:3001');
