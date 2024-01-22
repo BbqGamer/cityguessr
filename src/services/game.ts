@@ -8,6 +8,7 @@ interface QueueUser extends SessionUser {
     socket: Socket;
     ready: boolean;
     points: number;
+    guess: string;
 }
 
 let usersInQueue: QueueUser[] = [];
@@ -35,6 +36,7 @@ export function handleConnection(io: Server, socket: Socket) {
             socket: socket,
             ready: false,
             points: 0,
+            guess: ""
         }
         usersInQueue.push(session.user);
 
@@ -55,15 +57,19 @@ export function handleConnection(io: Server, socket: Socket) {
             gameStarted = true;
             io.emit('game-start', usersInQueue);
             usersInQueue.forEach(u => u.ready = false);
+            usersInQueue.forEach(u => u.guess = "");
             io.emit('queue', usersInQueue);
             var counter = 30;
             console.log('Game started');
             
             // random city
-            getRandomCity("European cities", (err: any, city) => {
+            getRandomCity("European cities", (err: any, res) => {
                 if (err) { return console.log(err); }
-                if (!city) { return console.log('No city found'); }
+                if (!res) { return console.log('No city found'); }
                 
+                const city = res[0];
+                const candidates = res[1];
+                io.emit('candidates', candidates);
                 console.log('City: ', city.name, 'was chosen randomly')
                 GPTDescribeCity(city).then(description => {
                     if (!description) {

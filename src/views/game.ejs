@@ -6,6 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cityguessr</title>
     <link rel="stylesheet" href="/css/base.css">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 </head>
 
 <body>
@@ -15,6 +18,8 @@
     <div id="queue"></div>
     <button onclick="ready()" class="ready" id="ready">Ready</button>
     <div id="city"></div>
+    <select id="city-select" class="js-example-basic-single" name="state" style="display: none;">
+    </select>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
     <script>
@@ -59,7 +64,7 @@
         })
 
         socket.on('city', (description) => {
-            document.getElementById('city').innerHTML = description
+            document.getElementById('city').innerHTML = "X is a city " + description
         })
 
         socket.on('game-end', (city) => {
@@ -78,7 +83,28 @@
             window.location = '/';
         });
 
+        socket.on('candidates', (cities) => {
+            console.log(cities)
+            var data = []
+            for (let i = 0; i < cities.length; i++) {
+                data.push({
+                    id: cities[i].id,
+                    text: cities[i].name + " (" + cities[i].country_name + ")"
+                })
+            }
+            console.log(data)
+            $('#city-select').select2({
+                data: data
+            });
+        });
+    
     </script>
 </body>
+<style>
+    select {
+        width: 300px;
+    }
+
+</style>
 
 </html>
