@@ -1,5 +1,6 @@
 import { ChromaClient, QueryResponse } from "chromadb";
 import { embedder } from "./embed";
+import { City } from "../../models/City";
 
 const client = new ChromaClient();
 
@@ -62,5 +63,29 @@ export async function closestCities(query: string, n_results: number): Promise<R
         return [null, ids, result.distances[0]]
     } catch (err) {
         return [err, [], []]
+    }
+}
+
+export async function addCity(city: Partial<City>): Promise<string> {
+    const NAME = 'cities';
+    try {
+        const collection = await client.getCollection({
+            name: NAME,
+            embeddingFunction: embedder,
+        })
+        const text = city.description + ' ' + city.infobox;
+        console.log("Adding embedding of a city", city.name, "with id", city.id, "...")
+        await collection.add({
+            ids: [String(city.id)],
+            documents: [text]
+        })
+
+        return JSON.stringify({
+            success: true
+        })
+    } catch (err) {
+        return JSON.stringify({
+            error: err.message
+        })
     }
 }

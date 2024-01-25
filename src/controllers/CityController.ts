@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { City, CityModel } from "../models/City";
-import { closestCities } from "../services/chroma/collection";
+import { addCity, closestCities } from "../services/chroma/collection";
 import config from '../../config.json'
 
 export class CityController {
@@ -60,7 +60,14 @@ export class CityController {
         const city = req.body;
         CityModel.addOne(city, req.session.user.user_id, (err, city) => {
             if (err) { return next(err); }
-            res.redirect('/cities');
+            if (!city) { return res.sendStatus(404); }
+            addCity(city).then((result) => {
+                res.redirect('/cities');
+                console.log(result);
+            }).catch((err) => {
+                console.log(err);
+                next(err)
+            })
         })
     }
 
