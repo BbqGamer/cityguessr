@@ -4,6 +4,7 @@ import { GPTDescribeCity } from './openai';
 import { getRandomCity } from './cityRetrieval';
 import { closestCities } from './chroma/collection';
 import { City, CityModel } from '../models/City';
+import { gameSettings } from '../app';
 
 
 interface QueueUser extends SessionUser {
@@ -63,11 +64,11 @@ export function handleConnection(io: Server, socket: Socket) {
             usersInQueue.forEach(u => u.guess = -1);
             usersInQueue.forEach(u => u.guessed = "");
             io.emit('queue', usersInQueue);
-            var counter = 30;
+            var counter = gameSettings.countdown;
             console.log('Game started');
             
             // random city
-            getRandomCity("European cities", (err: any, res) => {
+            getRandomCity(gameSettings.cityQuery, gameSettings.cityQuerySize, (err: any, res) => {
                 if (err) { return console.log(err); }
                 if (!res) { return console.log('No city found'); }
                 

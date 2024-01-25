@@ -29,6 +29,12 @@ declare module 'express-session' {
     }
 }
 
+export const gameSettings = {
+    countdown: 30,
+    cityQuery: 'European cities',
+    cityQuerySize: 30
+}
+
 const sessionMiddleware = session({
     secret: config.SESSION_SECRET,
     resave: false,
