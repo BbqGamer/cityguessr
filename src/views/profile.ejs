@@ -18,6 +18,16 @@
                 <li>Email: <%= profile.email %></li>
             </ul>
         </div>
+        <div>
+            Game settings
+            <form action="/users/change_settings" method="get">
+                <% console.log(gameSettings) %>
+                <input type="number" name="countdown" id="contdown" value="<%= gameSettings.countdown %>">
+                <input type="text" name="cityQuery", id="cityQuery" value="<%= gameSettings.cityQuery %>">
+                <input type="number" name="cityQuerySize" id="cityQuerySize" value="<%= gameSettings.cityQuerySize %>">
+                <input type="submit" value="Submit">
+            </form>
+        </div>
         <div class="users-cities">
             <% cities.forEach(function(city) { %>
                 <div class="city-block">

@@ -154,6 +154,4 @@ export function handleConnection(io: Server, socket: Socket) {
         usersInQueue = usersInQueue.filter(u => u.user_id !== session.user.user_id);
         io.emit('queue', usersInQueue);
     });
-
-
 }
