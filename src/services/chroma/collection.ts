@@ -66,7 +66,7 @@ export async function closestCities(query: string, n_results: number): Promise<R
     }
 }
 
-export async function addCity(city: Partial<City>): Promise<string> {
+export async function addEmbedding(city: Partial<City>): Promise<string> {
     const NAME = 'cities';
     try {
         const collection = await client.getCollection({
@@ -78,6 +78,29 @@ export async function addCity(city: Partial<City>): Promise<string> {
         await collection.add({
             ids: [String(city.id)],
             documents: [text]
+        })
+
+        return JSON.stringify({
+            success: true
+        })
+    } catch (err) {
+        return JSON.stringify({
+            error: err.message
+        })
+    }
+}
+
+export async function deleteEmbedding(city_id: number): Promise<string> {
+    //TODO: Fix a bug here this is not working
+    const NAME = 'cities';
+    try {
+        const collection = await client.getCollection({
+            name: NAME,
+            embeddingFunction: embedder,
+        })
+        console.log("Deleting embedding of a city with id", city_id, "...")
+        await collection.delete({
+            ids: [String(city_id)]
         })
 
         return JSON.stringify({

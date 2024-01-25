@@ -88,7 +88,6 @@ export class CityModel {
         }
 
         city = { ...defaultCity, ...city };
-        console.log("Adding city ", city.name)
         db.run(query, [
             city.name, city.url, city.country_name, city.country_url, city.country_flag_url,
             city.longitude, city.latitude, city.description, city.infobox, city.added_by, city.added_at

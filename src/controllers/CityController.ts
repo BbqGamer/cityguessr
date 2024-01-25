@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response, Router } from "express";
 import { City, CityModel } from "../models/City";
-import { addCity, closestCities } from "../services/chroma/collection";
+import { addEmbedding, closestCities, deleteEmbedding } from "../services/chroma/collection";
 import config from '../../config.json'
 
 export class CityController {
@@ -61,7 +61,7 @@ export class CityController {
         CityModel.addOne(city, req.session.user.user_id, (err, city) => {
             if (err) { return next(err); }
             if (!city) { return res.sendStatus(404); }
-            addCity(city).then((result) => {
+            addEmbedding(city).then((result) => {
                 res.redirect('/cities');
                 console.log(result);
             }).catch((err) => {
@@ -100,6 +100,9 @@ export class CityController {
         console.log("Deleting city with id", city_id, "by user", req.session.user.user_id, "...")
         CityModel.deleteOne(city_id, req.session.user, (err) => {
             if (err) { return next(err); }
+            deleteEmbedding(city_id).then((result) => {
+                console.log("Deleted embedding of city with id", city_id)
+            })
         })
         res.redirect('/users/profile');
     }
